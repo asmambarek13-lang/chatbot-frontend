@@ -1,0 +1,62 @@
+<div class="page">
+
+  <!-- GAUCHE -->
+  <div class="left-panel">
+    <div class="brand">
+      <div class="brand-icon">🤖</div>
+      <h1>Chatbot<br><span>Intelligent</span></h1>
+      <p>Système bilingue arabe–français avec génération documentaire</p>
+    </div>
+    <div class="features">
+      <div class="feature"><div class="dot"></div><span>NLP bilingue — Arabe & Français</span></div>
+      <div class="feature"><div class="dot"></div><span>Génération PDF & Word automatique</span></div>
+      <div class="feature"><div class="dot"></div><span>Base de connaissances RAG intégrée</span></div>
+    </div>
+  </div>
+
+  <!-- DROITE -->
+  <div class="right-panel">
+    <div class="form-wrap">
+
+      <div class="form-header">
+        <div class="eyebrow">Accès sécurisé</div>
+        <h2>Bienvenue</h2>
+        <p>Connectez-vous pour accéder à votre espace</p>
+      </div>
+
+      <!-- Langue -->
+      <div class="lang-toggle">
+        <button [class.active]="selectedLang === 'fr'" (click)="setLang('fr')">🇫🇷 Français</button>
+        <button [class.active]="selectedLang === 'ar'" (click)="setLang('ar')">🇹🇳 عربي</button>
+      </div>
+
+      <!-- Erreur -->
+      <div class="error-msg" *ngIf="errorMsg">⚠️ {{ errorMsg }}</div>
+
+      <!-- Champs -->
+      <div class="field">
+        <label>Nom d'utilisateur</label>
+        <div class="input-wrap">
+          <input type="text" [(ngModel)]="username" placeholder="Entrez votre identifiant"/>
+          <span>👤</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="input-wrap">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" placeholder="••••••••"/>
+          <span (click)="togglePassword()" style="cursor:pointer">{{ showPassword ? '🙈' : '👁' }}</span>
+        </div>
+      </div>
+
+      <!-- Bouton -->
+      <button class="btn-submit" (click)="login()" [disabled]="loading">
+        <span *ngIf="!loading">Se connecter</span>
+        <span *ngIf="loading">Connexion...</span>
+      </button>
+
+    </div>
+  </div>
+
+</div>

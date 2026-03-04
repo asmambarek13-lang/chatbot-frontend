@@ -1,0 +1,134 @@
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">🤖</div>
+        <span class="logo-text">Chatbot PFE</span>
+      </div>
+      <button class="new-chat-btn" (click)="newChat()">✏️ Nouvelle conversation</button>
+    </div>
+
+    <div class="lang-switch">
+      <div class="lang-opt" [class.active]="selectedLang === 'fr'" (click)="setLang('fr')">🇫🇷 FR</div>
+      <div class="lang-opt" [class.active]="selectedLang === 'ar'" (click)="setLang('ar')">🇹🇳 AR</div>
+    </div>
+
+    <div class="history-label">Historique</div>
+    <div class="history-list">
+      <div class="history-item active">💬 Conversation actuelle</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar">U</div>
+      <div class="user-info">
+        <div class="user-name">Utilisateur</div>
+        <div class="user-role">Connecté</div>
+      </div>
+      <button class="logout-btn" (click)="logout()" title="Déconnexion">⎋</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <span class="topbar-title">Conversation</span>
+      <div class="topbar-actions">
+        <button class="action-btn" (click)="openDocModal()">📄 Générer document</button>
+        <button class="action-btn primary" (click)="newChat()">+ Nouveau</button>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="messages-area">
+
+      <!-- WELCOME -->
+      <div class="welcome" *ngIf="welcomeShown">
+        <div class="welcome-icon">👋</div>
+        <h2>Bonjour, comment puis-je vous aider ?</h2>
+        <p>Je suis votre assistant intelligent. Posez-moi une question ou demandez un document administratif.</p>
+        <div class="suggestions">
+          <div class="suggestion" *ngFor="let s of suggestions" (click)="sendSuggestion(s)">
+            {{ s }}
+          </div>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div *ngFor="let msg of messages"
+           class="msg"
+           [class.user]="msg.sender === 'user'"
+           [class.bot]="msg.sender === 'bot'"
+           [class.rtl]="msg.language === 'ar'">
+        <div class="msg-avatar">{{ msg.sender === 'user' ? 'U' : '🤖' }}</div>
+        <div>
+          <div class="msg-bubble">{{ msg.content }}</div>
+          <div class="msg-time">{{ getTime(msg.timestamp) }}</div>
+        </div>
+      </div>
+
+      <!-- TYPING -->
+      <div class="typing" *ngIf="loading">
+        <div class="msg-avatar">🤖</div>
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-area">
+      <div class="input-box">
+        <textarea
+          [(ngModel)]="messageInput"
+          (keydown)="handleKey($event)"
+          [dir]="selectedLang === 'ar' ? 'rtl' : 'ltr'"
+          rows="1"
+          placeholder="Écrivez votre message...">
+        </textarea>
+        <button class="send-btn" (click)="sendMessage()" [disabled]="loading">➤</button>
+      </div>
+      <div class="input-hint">Entrée pour envoyer · Shift+Entrée pour nouvelle ligne</div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- MODAL DOCUMENT -->
+<div class="modal-overlay" *ngIf="showDocModal" (click)="closeDocModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <h3>📄 Générer un document</h3>
+
+    <div class="modal-field">
+      <label>Type de document</label>
+      <select [(ngModel)]="docType">
+        <option value="attestation">Attestation de travail</option>
+        <option value="certificat">Certificat de scolarité</option>
+        <option value="demande">Lettre de demande</option>
+      </select>
+    </div>
+
+    <div class="modal-field">
+      <label>Nom complet</label>
+      <input type="text" [(ngModel)]="docName" placeholder="Ex: Ahmed Ben Ali"/>
+    </div>
+
+    <div class="modal-field">
+      <label>Format</label>
+      <select [(ngModel)]="docFormat">
+        <option value="PDF">PDF</option>
+        <option value="DOCX">Word (DOCX)</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeDocModal()">Annuler</button>
+      <button class="btn-generate" (click)="generateDocument()">⬇ Générer</button>
+    </div>
+  </div>
+</div>

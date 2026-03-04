@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page {
+  display: flex;
+  height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+}
+
+// ── GAUCHE ──
+.left-panel {
+  width: 45%;
+  background: #1a3a2a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 50px;
+
+  .brand {
+    text-align: center;
+
+    .brand-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #c9a84c, #e8c97a);
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 24px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 12px;
+      span { color: #e8c97a; }
+    }
+
+    p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+  }
+
+  .features {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 300px;
+
+    .feature {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: rgba(255,255,255,0.65);
+      font-size: 0.78rem;
+
+      .dot {
+        width: 8px; height: 8px;
+        background: #c9a84c;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// ── DROITE ──
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f0e8;
+  padding: 60px 40px;
+}
+
+.form-wrap {
+  width: 100%;
+  max-width: 400px;
+
+  .form-header {
+    margin-bottom: 32px;
+
+    .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: #2c2416;
+      margin-bottom: 6px;
+    }
+
+    p { color: #8a7d6b; font-size: 0.85rem; }
+  }
+
+  .lang-toggle {
+    display: flex; gap: 8px;
+    margin-bottom: 24px;
+
+    button {
+      flex: 1; padding: 10px;
+      border: 1.5px solid #d4c9b0;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.82rem;
+      color: #8a7d6b;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &.active {
+        border-color: #c9a84c;
+        background: rgba(201,168,76,0.06);
+        color: #2c2416;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .error-msg {
+    background: rgba(139,58,42,0.08);
+    border: 1px solid rgba(139,58,42,0.2);
+    color: #8b3a2a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    margin-bottom: 16px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #2c2416;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+
+      input {
+        width: 100%;
+        padding: 13px 44px 13px 16px;
+        background: #fff;
+        border: 1.5px solid #d4c9b0;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: #2c2416;
+        outline: none;
+        transition: border-color 0.2s;
+
+        &:focus { border-color: #c9a84c; }
+        &::placeholder { color: #bbb; }
+      }
+
+      span {
+        position: absolute;
+        right: 14px; top: 50%;
+        transform: translateY(-50%);
+        color: #8a7d6b;
+      }
+    }
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: #1a3a2a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+
+    &:hover { background: #2a5a3a; }
+    &:disabled { background: #aaa; cursor: not-allowed; }
+  }
+}

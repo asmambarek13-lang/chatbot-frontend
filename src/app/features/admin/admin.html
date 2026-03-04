@@ -1,0 +1,107 @@
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">🤖</div>
+        <span class="logo-text">Chatbot PFE</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item" (click)="goToChat()">
+        <span class="nav-icon">💬</span>
+        <span>Chat</span>
+      </div>
+      <div class="nav-item active">
+        <span class="nav-icon">⚙️</span>
+        <span>Administration</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar">A</div>
+      <div class="user-info">
+        <div class="user-name">Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" (click)="logout()">⎋</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div>
+        <h1 class="topbar-title">Tableau de bord</h1>
+        <p class="topbar-sub">Vue d'ensemble du système</p>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card" *ngFor="let stat of stats">
+        <div class="stat-icon">{{ stat.icon }}</div>
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+
+    <!-- USERS TABLE -->
+    <div class="section">
+      <div class="section-header">
+        <h2>👥 Utilisateurs</h2>
+        <span class="badge">{{ totalUsers }} total</span>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading" *ngIf="loading">
+        <div class="spinner"></div>
+        <span>Chargement...</span>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap" *ngIf="!loading && users.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom d'utilisateur</th>
+              <th>Email</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>#{{ user.id }}</td>
+              <td>
+                <div class="user-cell">
+                  <div class="mini-avatar">{{ user.username[0].toUpperCase() }}</div>
+                  {{ user.username }}
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td><span class="status-badge">✅ Actif</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Vide -->
+      <div class="empty-state" *ngIf="!loading && users.length === 0">
+        <p>Aucun utilisateur trouvé</p>
+      </div>
+
+    </div>
+
+  </main>
+</div>
