@@ -18,37 +18,56 @@ export class LoginComponent {
   loading = false;
   showPassword = false;
   selectedLang: 'fr' | 'ar' = 'fr';
+  userFocused = false;
+  passFocused = false;
+
+  featuresFr = [
+    { icon: '🧠', text: 'NLP bilingue Arabe & Français' },
+    { icon: '📄', text: 'Génération PDF & Word automatique' },
+    { icon: '🔍', text: 'Base de connaissances RAG' },
+    { icon: '⚡', text: 'Réponses en temps réel' },
+  ];
+
+  featuresAr = [
+    { icon: '🧠', text: 'معالجة اللغة الطبيعية عربي وفرنسي' },
+    { icon: '📄', text: 'توليد PDF و Word تلقائياً' },
+    { icon: '🔍', text: 'قاعدة معرفة RAG متكاملة' },
+    { icon: '⚡', text: 'ردود فورية في الوقت الحقيقي' },
+  ];
+
+  particles = Array.from({ length: 20 }, () => {
+    const size = Math.random() * 6 + 2;
+    return `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;animation-delay:${Math.random()*5}s;animation-duration:${Math.random()*10+8}s;opacity:${Math.random()*0.4+0.1}`;
+  });
 
   constructor(private auth: AuthService, private router: Router) {}
 
   login() {
     if (!this.username || !this.password) {
-      this.errorMsg = 'Veuillez remplir tous les champs';
+      this.errorMsg = this.selectedLang === 'ar'
+        ? 'يرجى ملء جميع الحقول'
+        : 'Veuillez remplir tous les champs';
       return;
     }
-
     this.loading = true;
     this.errorMsg = '';
-
-    this.auth.login({
-      username: this.username,
-      password: this.password
-    }).subscribe({
+    this.auth.login({ username: this.username, password: this.password }).subscribe({
       next: () => {
-        this.router.navigate(['/chat']);
+        if (this.auth.isAdmin()) {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/chat']);
+        }
       },
-      error: () => {
-        this.errorMsg = 'Identifiants incorrects. Veuillez réessayer.';
+      error: (err) => {
+        this.errorMsg = err.status === 401
+          ? (this.selectedLang === 'ar' ? 'بيانات الدخول غير صحيحة' : 'Identifiants incorrects.')
+          : (this.selectedLang === 'ar' ? 'خطأ في الاتصال بالخادم' : 'Erreur de connexion au serveur.');
         this.loading = false;
       }
     });
   }
 
-  setLang(lang: 'fr' | 'ar') {
-    this.selectedLang = lang;
-  }
-
-  togglePassword() {
-    this.showPassword = !this.showPassword;
-  }
+  setLang(lang: 'fr' | 'ar') { this.selectedLang = lang; }
+  togglePassword() { this.showPassword = !this.showPassword; }
 }
