@@ -26,7 +26,7 @@
         <div class="user-name">Admin</div>
         <div class="user-role">Administrateur</div>
       </div>
-      <button class="logout-btn" (click)="logout()">⎋</button>
+      <button class="logout-btn" (click)="logout()">🚪</button>
     </div>
   </aside>
 
@@ -43,7 +43,8 @@
 
     <!-- STATS -->
     <div class="stats-grid">
-      <div class="stat-card" *ngFor="let stat of stats">
+      <div class="stat-card" *ngFor="let stat of stats; let i = index"
+        [style.animation-delay]="(i * 0.1) + 's'">
         <div class="stat-icon">{{ stat.icon }}</div>
         <div class="stat-value">{{ stat.value }}</div>
         <div class="stat-label">{{ stat.label }}</div>
@@ -98,7 +99,7 @@
 
       <!-- Vide -->
       <div class="empty-state" *ngIf="!loading && users.length === 0">
-        <p>Aucun utilisateur trouvé</p>
+        <p>😶 Aucun utilisateur trouvé</p>
       </div>
 
     </div>
