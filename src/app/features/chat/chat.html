@@ -26,11 +26,30 @@
     </div>
 
     <div class="history-label">{{ selectedLang === 'ar' ? 'السجل' : 'Historique' }}</div>
-    <div class="history-list">
-      <div class="history-item active">
+
+    <!-- HISTORIQUE CHARGEMENT -->
+    <div class="history-loading" *ngIf="historyLoading">
+      <div class="mini-spinner"></div>
+      <span>{{ selectedLang === 'ar' ? 'تحميل...' : 'Chargement...' }}</span>
+    </div>
+
+    <!-- HISTORIQUE LISTE -->
+    <div class="history-list" *ngIf="!historyLoading">
+
+      <!-- Conversation actuelle -->
+      <div class="history-item active" *ngIf="messages.length > 0">
         <span class="hist-icon">💬</span>
-        <span>{{ selectedLang === 'ar' ? 'المحادثة الحالية' : 'Conversation actuelle' }}</span>
+        <div class="hist-info">
+          <span class="hist-preview">{{ messages[0]?.content?.substring(0, 25) }}...</span>
+          <span class="hist-time">{{ messages[0]?.timestamp ? getTime(messages[0].timestamp) : '' }}</span>
+        </div>
       </div>
+
+      <!-- Pas de messages -->
+      <div class="history-empty" *ngIf="messages.length === 0">
+        <span>{{ selectedLang === 'ar' ? 'لا توجد محادثات' : 'Aucune conversation' }}</span>
+      </div>
+
     </div>
 
     <div class="sidebar-footer">
@@ -91,7 +110,7 @@
 
       <!-- TYPING -->
       <div class="typing" *ngIf="loading">
-        <div class="msg-avatar bot-ava">🤖</div>
+        <div class="bot-ava">🤖</div>
         <div class="typing-dots">
           <span></span><span></span><span></span>
         </div>

@@ -12,9 +12,11 @@ export interface AuthResponse {
   token: string;
   username: string;
   role: string;
+  id?: number;
 }
 
 export interface User {
+  id?: number;
   username: string;
   role: string;
 }
@@ -35,7 +37,7 @@ export class AuthService {
     ).pipe(
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.token);
-        const user: User = { username: res.username, role: res.role };
+        const user: User = { id: res.id, username: res.username, role: res.role };
         localStorage.setItem(this.USER_KEY, JSON.stringify(user));
         this.currentUserSubject.next(user);
       })
@@ -59,6 +61,15 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.currentUserSubject.value?.role === 'ADMIN';
+  }
+
+  // ✅ Retourne l'ID de l'utilisateur connecté (1 par défaut)
+  getUserId(): number {
+    return this.currentUserSubject.value?.id ?? 1;
+  }
+
+  getUsername(): string {
+    return this.currentUserSubject.value?.username ?? 'Utilisateur';
   }
 
   private loadUser(): User | null {

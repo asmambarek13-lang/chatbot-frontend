@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,12 +12,18 @@ import { AuthService } from '../../core/auth';
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss']
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, AfterViewChecked {
+  @ViewChild('messagesEnd') private messagesContainer!: ElementRef;
+
   messages: ChatMessage[] = [];
   messageInput = '';
   loading = false;
   selectedLang: 'fr' | 'ar' = 'fr';
   welcomeShown = true;
+  historyLoading = false;
+
+  // Historique des sessions
+  conversations: { id: number; preview: string; date: Date }[] = [];
 
   suggestions = [
     '📋 Demander une attestation',
@@ -40,7 +46,57 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
+      return;
     }
+    this.loadHistory();
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  // ── CHARGER L'HISTORIQUE DEPUIS LA DB ──
+  loadHistory() {
+    this.historyLoading = true;
+    const userId = this.authService.getUserId();
+
+    this.chatService.getChatHistory(userId).subscribe({
+      next: (history: any[]) => {
+        if (history && history.length > 0) {
+          // Convertir les messages DB en ChatMessage
+          this.messages = history.map(m => ({
+            content: m.content,
+            sender: m.sender as 'user' | 'bot',
+            language: m.language as 'fr' | 'ar',
+            timestamp: new Date(m.createdAt)
+          }));
+          this.welcomeShown = false;
+
+          // Créer un résumé pour la sidebar
+          const firstUserMsg = history.find(m => m.sender === 'user');
+          if (firstUserMsg) {
+            this.conversations = [{
+              id: 1,
+              preview: firstUserMsg.content.substring(0, 30) + '...',
+              date: new Date(firstUserMsg.createdAt)
+            }];
+          }
+        }
+        this.historyLoading = false;
+      },
+      error: () => {
+        this.historyLoading = false;
+      }
+    });
+  }
+
+  scrollToBottom() {
+    try {
+      if (this.messagesContainer) {
+        this.messagesContainer.nativeElement.scrollTop =
+          this.messagesContainer.nativeElement.scrollHeight;
+      }
+    } catch (e) {}
   }
 
   setLang(lang: 'fr' | 'ar') {
@@ -81,12 +137,23 @@ export class ChatComponent implements OnInit {
           timestamp: new Date()
         });
         this.loading = false;
+
+        // Mettre à jour la sidebar
+        if (this.conversations.length === 0) {
+          this.conversations = [{
+            id: 1,
+            preview: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
+            date: new Date()
+          }];
+        }
       },
       error: () => {
         this.messages.push({
-          content: '❌ Erreur de connexion au serveur.',
+          content: this.selectedLang === 'ar'
+            ? '❌ خطأ في الاتصال بالخادم.'
+            : '❌ Erreur de connexion au serveur.',
           sender: 'bot',
-          language: 'fr',
+          language: this.selectedLang,
           timestamp: new Date()
         });
         this.loading = false;
@@ -104,6 +171,7 @@ export class ChatComponent implements OnInit {
   newChat() {
     this.messages = [];
     this.welcomeShown = true;
+    this.conversations = [];
   }
 
   logout() {
@@ -129,7 +197,9 @@ export class ChatComponent implements OnInit {
         this.closeDocModal();
       },
       error: () => {
-        alert('Erreur lors de la génération du document');
+        alert(this.selectedLang === 'ar'
+          ? 'خطأ في توليد الوثيقة'
+          : 'Erreur lors de la génération du document');
       }
     });
   }
