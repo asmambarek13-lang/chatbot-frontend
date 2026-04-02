@@ -8,6 +8,12 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
 export interface AuthResponse {
   token: string;
   username: string;
@@ -32,9 +38,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
-      `/api/auth/login`, credentials
-    ).pipe(
+    return this.http.post<AuthResponse>(`/api/auth/login`, credentials).pipe(
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.token);
         const user: User = { id: res.id, username: res.username, role: res.role };
@@ -42,6 +46,11 @@ export class AuthService {
         this.currentUserSubject.next(user);
       })
     );
+  }
+
+  // ✅ REGISTER
+  register(data: RegisterRequest): Observable<any> {
+    return this.http.post<any>(`/api/auth/register`, data);
   }
 
   logout(): void {
@@ -63,7 +72,6 @@ export class AuthService {
     return this.currentUserSubject.value?.role === 'ADMIN';
   }
 
-  // ✅ Retourne l'ID de l'utilisateur connecté (1 par défaut)
   getUserId(): number {
     return this.currentUserSubject.value?.id ?? 1;
   }

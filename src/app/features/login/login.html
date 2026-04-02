@@ -1,142 +1,91 @@
-<div class="login-page" [class.rtl]="selectedLang === 'ar'">
-
-  <!-- Animated background -->
-  <div class="bg-orbs">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-    <div class="orb orb4"></div>
-  </div>
-
-  <!-- Floating particles -->
-  <div class="particles">
-    <span *ngFor="let p of particles" class="particle" [style]="p"></span>
-  </div>
-
+<div class="login-page" [class.rtl]="selectedLang === 'ar'" [dir]="selectedLang === 'ar' ? 'rtl' : 'ltr'">
   <div class="login-container">
 
     <!-- LEFT PANEL -->
     <div class="left-panel">
       <div class="left-content">
-
-        <div class="logo-wrap">
-          <div class="logo-ring"></div>
-          <div class="logo-icon">🤖</div>
+        <div class="brand">
+          <div class="brand-icon">🤖</div>
+          <span class="brand-name">Chatbot PFE</span>
         </div>
-
-        <h1 class="hero-title">
-          <span class="line1">Chatbot</span>
-          <span class="line2">Intelligent</span>
-        </h1>
-
-        <p class="hero-desc">
-          {{ selectedLang === 'ar'
-            ? 'مساعد ذكي ثنائي اللغة — عربي وفرنسي'
-            : 'Assistant IA bilingue — Arabe & Français' }}
-        </p>
-
-        <div class="features-list">
-          <div class="feat-item" *ngFor="let f of (selectedLang === 'ar' ? featuresAr : featuresFr); let i = index"
-            [style.animation-delay]="(i * 0.1) + 's'">
-            <div class="feat-icon">{{ f.icon }}</div>
-            <span>{{ f.text }}</span>
+        <div class="new-badge">✦ Assistant Intelligent</div>
+        <div class="hero-text">
+          <h1>
+            {{ selectedLang === 'ar' ? 'مساعدك' : 'Votre assistant' }}
+            <span>{{ selectedLang === 'ar' ? 'الإداري الذكي' : 'administratif intelligent' }}</span>
+          </h1>
+          <p>{{ selectedLang === 'ar'
+            ? 'توليد وثائق إدارية، إجابات فورية، دعم ثنائي اللغة'
+            : 'Générez des documents, obtenez des réponses instantanées en FR et AR' }}</p>
+        </div>
+        <div class="feat-list">
+          <div class="feat-row" *ngFor="let f of features">
+            <div class="feat-icon-wrap">{{ f.icon }}</div>
+            <span class="feat-text">{{ selectedLang === 'ar' ? f.ar : f.fr }}</span>
           </div>
         </div>
-
-        <div class="stats-row">
-          <div class="stat">
-            <span class="stat-num">2</span>
-            <span class="stat-lab">Langues</span>
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-val">3</span>
+            <span class="stat-lbl">{{ selectedLang === 'ar' ? 'وثائق' : 'Documents' }}</span>
           </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">RAG</span>
-            <span class="stat-lab">Intégré</span>
+          <div class="stat-item">
+            <span class="stat-val">2</span>
+            <span class="stat-lbl">{{ selectedLang === 'ar' ? 'لغات' : 'Langues' }}</span>
           </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">PDF</span>
-            <span class="stat-lab">& Word</span>
+          <div class="stat-item">
+            <span class="stat-val">AI</span>
+            <span class="stat-lbl">{{ selectedLang === 'ar' ? 'ذكاء' : 'Powered' }}</span>
           </div>
         </div>
-
       </div>
     </div>
 
     <!-- RIGHT PANEL -->
     <div class="right-panel">
-      <div class="form-card" [dir]="selectedLang === 'ar' ? 'rtl' : 'ltr'">
-
-        <!-- Lang toggle -->
-        <div class="lang-bar">
-          <button class="lang-btn" [class.active]="selectedLang === 'fr'" (click)="setLang('fr')">
-            🇫🇷 FR
-          </button>
-          <button class="lang-btn" [class.active]="selectedLang === 'ar'" (click)="setLang('ar')">
-            🇹🇳 AR
-          </button>
-        </div>
-
-        <div class="form-title">
-          <h2>{{ selectedLang === 'ar' ? 'مرحباً بعودتك' : 'Bon retour !' }}</h2>
-          <p>{{ selectedLang === 'ar' ? 'سجّل دخولك للمتابعة' : 'Connectez-vous pour continuer' }}</p>
-        </div>
-
-        <!-- Error -->
-        <div class="error-box" *ngIf="errorMsg">
-          <span class="error-icon">⚠️</span>
-          <span>{{ errorMsg }}</span>
-        </div>
-
-        <!-- Username -->
-        <div class="input-group">
-          <label>{{ selectedLang === 'ar' ? 'اسم المستخدم' : 'Identifiant' }}</label>
-          <div class="input-field" [class.focused]="userFocused">
-            <span class="field-icon">👤</span>
-            <input
-              type="text"
-              [(ngModel)]="username"
-              [placeholder]="selectedLang === 'ar' ? 'أدخل اسم المستخدم' : 'Votre identifiant'"
-              (focus)="userFocused = true"
-              (blur)="userFocused = false"
-              (keyup.enter)="login()"
-            />
+      <div class="form-wrap">
+        <div class="lang-row">
+          <div class="lang-toggle">
+            <button class="lang-btn" [class.active]="selectedLang === 'fr'" (click)="selectedLang = 'fr'">FR</button>
+            <button class="lang-btn" [class.active]="selectedLang === 'ar'" (click)="selectedLang = 'ar'">AR</button>
           </div>
         </div>
-
-        <!-- Password -->
-        <div class="input-group">
-          <label>{{ selectedLang === 'ar' ? 'كلمة المرور' : 'Mot de passe' }}</label>
-          <div class="input-field" [class.focused]="passFocused">
-            <span class="field-icon">🔒</span>
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              [(ngModel)]="password"
-              [placeholder]="selectedLang === 'ar' ? '••••••••' : '••••••••'"
-              (focus)="passFocused = true"
-              (blur)="passFocused = false"
-              (keyup.enter)="login()"
-            />
-            <span class="toggle-pass" (click)="togglePassword()">
-              {{ showPassword ? '🙈' : '👁️' }}
-            </span>
+        <div class="form-header">
+          <div class="form-logo">🤖</div>
+          <h2>{{ selectedLang === 'ar' ? 'تسجيل الدخول' : 'Connexion' }}</h2>
+          <p>{{ selectedLang === 'ar' ? 'أدخل بيانات حسابك للمتابعة' : 'Entrez vos identifiants pour continuer' }}</p>
+        </div>
+        <div class="alert error" *ngIf="error">⚠️ {{ error }}</div>
+        <div class="field">
+          <label>{{ selectedLang === 'ar' ? 'اسم المستخدم' : "NOM D'UTILISATEUR" }}</label>
+          <div class="input-wrap" [class.active]="userFocused">
+            <span class="ico">👤</span>
+            <input type="text" [(ngModel)]="username"
+              [placeholder]="selectedLang === 'ar' ? 'اسم المستخدم' : 'Nom d\'utilisateur'"
+              (focus)="userFocused=true" (blur)="userFocused=false"
+              (keyup.enter)="login()"/>
           </div>
         </div>
-
-        <!-- Submit -->
-        <button class="submit-btn" (click)="login()" [disabled]="loading" [class.loading]="loading">
-          <span class="btn-glow"></span>
-          <span *ngIf="!loading" class="btn-text">
-            {{ selectedLang === 'ar' ? '🚀 دخول' : '🚀 Se connecter' }}
-          </span>
-          <span *ngIf="loading" class="btn-text loading-text">
-            <span class="dot-pulse"><span></span><span></span><span></span></span>
-            {{ selectedLang === 'ar' ? 'جارٍ التحقق...' : 'Vérification...' }}
-          </span>
+        <div class="field">
+          <label>{{ selectedLang === 'ar' ? 'كلمة المرور' : 'MOT DE PASSE' }}</label>
+          <div class="input-wrap" [class.active]="passFocused">
+            <span class="ico">🔒</span>
+            <input [type]="showPass ? 'text' : 'password'" [(ngModel)]="password"
+              [placeholder]="selectedLang === 'ar' ? 'كلمة المرور' : '••••••••'"
+              (focus)="passFocused=true" (blur)="passFocused=false"
+              (keyup.enter)="login()"/>
+            <span class="eye" (click)="showPass=!showPass">{{ showPass ? '🙈' : '👁️' }}</span>
+          </div>
+        </div>
+        <button class="btn-primary" (click)="login()" [disabled]="loading">
+          <ng-container *ngIf="!loading">{{ selectedLang === 'ar' ? 'تسجيل الدخول' : 'Se connecter →' }}</ng-container>
+          <div class="dots" *ngIf="loading"><span></span><span></span><span></span></div>
         </button>
-
-        <p class="form-hint">{{ selectedLang === 'ar' ? 'نظام آمن ومحمي بـ JWT' : 'Système sécurisé par JWT' }} 🔐</p>
-
+        <div class="switch-hint">
+          {{ selectedLang === 'ar' ? 'ليس لديك حساب؟' : 'Pas encore de compte ?' }}
+          <a (click)="goToRegister()">{{ selectedLang === 'ar' ? 'إنشاء حساب' : "S'inscrire" }}</a>
+        </div>
+        <div class="secure-badge">🔒 {{ selectedLang === 'ar' ? 'اتصال آمن' : 'Connexion sécurisée' }}</div>
       </div>
     </div>
 

@@ -1,0 +1,377 @@
+<div class="register-page">
+
+  <!-- HEADER -->
+  <div class="reg-header">
+    <div class="brand">
+      <div class="brand-icon">🤖</div>
+      <span class="brand-name">Chatbot PFE</span>
+    </div>
+    <button class="lang-btn" (click)="toggleLang()">
+      {{ lang === 'fr' ? 'عربية' : 'FR' }}
+    </button>
+  </div>
+
+  <!-- BODY -->
+  <div class="reg-body">
+
+    <!-- TOP -->
+    <div class="reg-top">
+      <h1>Dossier d'inscription</h1>
+      <p>Remplissez votre dossier complet — vos documents seront générés automatiquement</p>
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+      </div>
+      <span class="step-label">Étape {{ currentStep }} / {{ totalSteps }}</span>
+    </div>
+
+    <!-- STEPS NAV -->
+    <div class="steps-nav">
+      <div class="step-item"
+           *ngFor="let step of steps; let i = index"
+           [class.active]="currentStep === i + 1"
+           [class.done]="currentStep > i + 1">
+        <div class="step-circle">
+          <span *ngIf="currentStep <= i + 1">{{ i + 1 }}</span>
+          <span *ngIf="currentStep > i + 1">✓</span>
+        </div>
+        <span class="step-name">{{ step }}</span>
+      </div>
+    </div>
+
+    <!-- CARD -->
+    <div class="step-card">
+
+      <!-- ÉTAPE 1 -->
+      <div *ngIf="currentStep === 1" class="step-content">
+        <div class="step-header">
+          <div class="step-icon-box">🪪</div>
+          <div>
+            <h2>Informations personnelles</h2>
+            <p>Votre identité civile complète</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>PRÉNOM <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.prenom" placeholder="Votre prénom" />
+          </div>
+          <div class="field">
+            <label>NOM DE FAMILLE <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.nom" placeholder="Votre nom" />
+          </div>
+          <div class="field">
+            <label>DATE DE NAISSANCE <span class="req">*</span></label>
+            <input type="date" [(ngModel)]="form.dateNaissance" />
+          </div>
+          <div class="field">
+            <label>LIEU DE NAISSANCE</label>
+            <input type="text" [(ngModel)]="form.lieuNaissance" placeholder="Ex: Tunis" />
+          </div>
+          <div class="field">
+            <label>SEXE <span class="req">*</span></label>
+            <select [(ngModel)]="form.sexe">
+              <option value="">-- Choisir --</option>
+              <option value="M">Masculin</option>
+              <option value="F">Féminin</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>NATIONALITÉ</label>
+            <input type="text" [(ngModel)]="form.nationalite" />
+          </div>
+          <div class="field full">
+            <label>NUMÉRO CIN / PASSEPORT <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.cin" placeholder="Ex: 14151617" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 -->
+      <div *ngIf="currentStep === 2" class="step-content">
+        <div class="step-header">
+          <div class="step-icon-box">📍</div>
+          <div>
+            <h2>Coordonnées</h2>
+            <p>Comment vous contacter</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label>ADRESSE COMPLÈTE <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.adresse" placeholder="Rue, ville" />
+          </div>
+          <div class="field">
+            <label>NUMÉRO DE TÉLÉPHONE <span class="req">*</span></label>
+            <input type="tel" [(ngModel)]="form.telephone" placeholder="+216 XX XXX XXX" />
+          </div>
+          <div class="field">
+            <label>ADRESSE EMAIL <span class="req">*</span></label>
+            <input type="email" [(ngModel)]="form.email" placeholder="exemple@email.com" />
+          </div>
+        </div>
+        <div class="info-banner">
+          ℹ️ Ces informations seront utilisées pour vous contacter et figureront sur vos documents officiels.
+        </div>
+      </div>
+
+      <!-- ÉTAPE 3 -->
+      <div *ngIf="currentStep === 3" class="step-content">
+        <div class="step-header">
+          <div class="step-icon-box">📚</div>
+          <div>
+            <h2>Informations académiques</h2>
+            <p>Votre parcours scolaire</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>NIVEAU D'ÉTUDE <span class="req">*</span></label>
+            <select [(ngModel)]="form.niveau">
+              <option value="">-- Choisir --</option>
+              <option value="Licence (Bac+3)">Licence (Bac+3)</option>
+              <option value="Master (Bac+5)">Master (Bac+5)</option>
+              <option value="Doctorat">Doctorat</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>SÉRIE DU BAC</label>
+            <select [(ngModel)]="form.sectionBac">
+              <option value="">-- Choisir --</option>
+              <option value="Sciences">Sciences</option>
+              <option value="Mathématiques">Mathématiques</option>
+              <option value="Informatique">Informatique</option>
+              <option value="Économie">Économie</option>
+              <option value="Lettres">Lettres</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>ANNÉE D'OBTENTION DU BAC <span class="req">*</span></label>
+            <select [(ngModel)]="form.anneeBac">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let y of bacYears" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>MOYENNE DU BAC</label>
+            <input type="number" [(ngModel)]="form.moyenneBac"
+              placeholder="Ex: 14.5" min="10" max="20" step="0.01" />
+          </div>
+          <div class="field full">
+            <label>ÉTABLISSEMENT PRÉCÉDENT <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.lycee" placeholder="Nom du lycée / université" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 4 -->
+      <div *ngIf="currentStep === 4" class="step-content">
+        <div class="step-header">
+          <div class="step-icon-box">🎯</div>
+          <div>
+            <h2>Choix de formation</h2>
+            <p>La filière que vous souhaitez intégrer</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label>FILIÈRE DEMANDÉE <span class="req">*</span></label>
+            <select [(ngModel)]="form.filiere">
+              <option value="">-- Choisir --</option>
+              <option value="Informatique">Informatique</option>
+              <option value="Génie Logiciel">Génie Logiciel</option>
+              <option value="Cybersécurité">Cybersécurité</option>
+              <option value="Master Intelligence Artificielle">Master Intelligence Artificielle</option>
+              <option value="Gestion">Gestion</option>
+              <option value="Commerce International">Commerce International</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>NIVEAU D'INTÉGRATION <span class="req">*</span></label>
+            <select [(ngModel)]="form.niveauIntegration">
+              <option value="">-- Choisir --</option>
+              <option value="Licence 1 (L1)">Licence 1 (L1)</option>
+              <option value="Licence 2 (L2)">Licence 2 (L2)</option>
+              <option value="Licence 3 (L3)">Licence 3 (L3)</option>
+              <option value="Master 1 (M1)">Master 1 (M1)</option>
+              <option value="Master 2 (M2)">Master 2 (M2)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>TYPE D'INSCRIPTION <span class="req">*</span></label>
+            <select [(ngModel)]="form.typeInscription">
+              <option value="">-- Choisir --</option>
+              <option value="Nouveau">Nouveau étudiant</option>
+              <option value="Réinscription">Réinscription</option>
+              <option value="Transfert">Transfert d'un autre établissement</option>
+            </select>
+          </div>
+        </div>
+        <div class="info-banner">
+          🎓 Votre choix de formation déterminera les documents générés dans votre espace étudiant.
+        </div>
+      </div>
+
+      <!-- ÉTAPE 5 -->
+      <div *ngIf="currentStep === 5" class="step-content">
+        <div class="step-header">
+          <div class="step-icon-box">💳</div>
+          <div>
+            <h2>Informations financières</h2>
+            <p>Modalités de paiement des frais de scolarité</p>
+          </div>
+        </div>
+        <div class="payment-options">
+          <label class="payment-card" [class.selected]="form.modePaiement === 'comptant'"
+            (click)="form.modePaiement = 'comptant'">
+            <input type="radio" name="paiement" value="comptant" [(ngModel)]="form.modePaiement" />
+            <div class="payment-info">
+              <strong>💰 COMPTANT</strong>
+              <span>PAIEMENT INTÉGRAL À L'INSCRIPTION</span>
+            </div>
+          </label>
+          <label class="payment-card" [class.selected]="form.modePaiement === '2tranches'"
+            (click)="form.modePaiement = '2tranches'">
+            <input type="radio" name="paiement" value="2tranches" [(ngModel)]="form.modePaiement" />
+            <div class="payment-info">
+              <strong>📅 2 TRANCHES</strong>
+              <span>50% À L'INSCRIPTION, 50% AU 2ÈME SEMESTRE</span>
+            </div>
+          </label>
+          <label class="payment-card" [class.selected]="form.modePaiement === '3tranches'"
+            (click)="form.modePaiement = '3tranches'">
+            <input type="radio" name="paiement" value="3tranches" [(ngModel)]="form.modePaiement" />
+            <div class="payment-info">
+              <strong>📆 3 TRANCHES</strong>
+              <span>PAIEMENT EN 3 VERSEMENTS ÉGAUX</span>
+            </div>
+          </label>
+        </div>
+        <div class="bourse-row">
+          <label class="bourse-label">BÉNÉFICIAIRE D'UNE BOURSE ? <span class="req">*</span></label>
+          <div class="bourse-btns">
+            <button class="bourse-btn" [class.yes]="form.bourse === 'oui'"
+              (click)="form.bourse = 'oui'">✅ OUI</button>
+            <button class="bourse-btn" [class.no]="form.bourse === 'non'"
+              (click)="form.bourse = 'non'">❌ NON</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 6 -->
+      <div *ngIf="currentStep === 6" class="step-content">
+        <div class="step-header">
+          <div class="step-icon-box">🔐</div>
+          <div>
+            <h2>Créer votre compte</h2>
+            <p>Vos identifiants de connexion à l'espace étudiant</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field full">
+            <label>IDENTIFIANT UNIQUE DE LA FACULTÉ <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.identifiantFaculte"
+              placeholder="Ex: 121314151512"
+              (input)="validateIdentifiant()"
+              maxlength="12" />
+            <div class="field-hint">
+              🎓 Cet identifiant de 12 chiffres vous a été remis par l'administration.
+            </div>
+            <div class="valid-badge" *ngIf="identifiantValide">✅ Identifiant valide</div>
+            <div class="invalid-badge" *ngIf="identifiantInvalide">❌ Identifiant invalide</div>
+          </div>
+          <div class="field full">
+            <label>NOM D'UTILISATEUR <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.username" placeholder="Ex: asma.mbarek" />
+            <div class="field-hint">Ce nom sera utilisé pour vous connecter</div>
+          </div>
+          <div class="field">
+            <label>MOT DE PASSE <span class="req">*</span></label>
+            <input [type]="showPwd ? 'text' : 'password'"
+              [(ngModel)]="form.password" placeholder="••••••••" />
+          </div>
+          <div class="field">
+            <label>CONFIRMER LE MOT DE PASSE <span class="req">*</span></label>
+            <input [type]="showPwd ? 'text' : 'password'"
+              [(ngModel)]="form.confirmPassword" placeholder="••••••••" />
+          </div>
+          <div class="field full">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="showPwd" />
+              Afficher le mot de passe
+            </label>
+          </div>
+        </div>
+        <div class="recap">
+          <h3>📋 Récapitulatif de votre dossier</h3>
+          <div class="recap-grid">
+            <div class="recap-item">
+              <span>NOM COMPLET</span>
+              <strong>{{ form.prenom }} {{ form.nom }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>CIN</span>
+              <strong>{{ form.cin }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>IDENTIFIANT FACULTÉ</span>
+              <strong>{{ form.identifiantFaculte }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>EMAIL</span>
+              <strong>{{ form.email }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>TÉLÉPHONE</span>
+              <strong>{{ form.telephone }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>FILIÈRE</span>
+              <strong>{{ form.filiere }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>NIVEAU</span>
+              <strong>{{ form.niveauIntegration }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>TYPE INSCRIPTION</span>
+              <strong>{{ form.typeInscription }}</strong>
+            </div>
+            <div class="recap-item">
+              <span>PAIEMENT</span>
+              <strong>{{ form.modePaiement }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAVIGATION -->
+      <div class="nav-actions">
+        <button class="btn-prev" (click)="prevStep()" *ngIf="currentStep > 1">
+          ← Précédent
+        </button>
+        <button class="btn-next" (click)="nextStep()" *ngIf="currentStep < totalSteps">
+          Suivant →
+        </button>
+        <button class="btn-submit" (click)="submitForm()" *ngIf="currentStep === totalSteps">
+          ✅ Soumettre le dossier
+        </button>
+      </div>
+
+    </div>
+
+    <p class="login-link">Déjà inscrit ? <a routerLink="/login">Se connecter</a></p>
+  </div>
+
+  <!-- MODAL SUCCÈS -->
+  <div class="modal-overlay" *ngIf="submitted">
+    <div class="modal-card">
+      <div class="modal-icon">🎉</div>
+      <h2>Dossier soumis avec succès !</h2>
+      <p>Votre dossier a été enregistré. Vous recevrez un email de confirmation à
+        <strong>{{ form.email }}</strong>.
+      </p>
+      <button class="btn-submit" (click)="goToLogin()">Se connecter →</button>
+    </div>
+  </div>
+
+</div>

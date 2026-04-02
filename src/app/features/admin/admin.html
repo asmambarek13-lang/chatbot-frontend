@@ -8,18 +8,27 @@
         <span class="logo-text">Chatbot PFE</span>
       </div>
     </div>
-
     <nav class="nav">
       <div class="nav-item" (click)="goToChat()">
         <span class="nav-icon">💬</span>
         <span>Chat</span>
       </div>
-      <div class="nav-item active">
-        <span class="nav-icon">⚙️</span>
-        <span>Administration</span>
+      <div class="nav-item" [class.active]="activeTab === 'dashboard'"
+        (click)="activeTab = 'dashboard'">
+        <span class="nav-icon">📊</span>
+        <span>Tableau de bord</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab === 'etudiants'"
+        (click)="activeTab = 'etudiants'">
+        <span class="nav-icon">🎓</span>
+        <span>Étudiants</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab === 'utilisateurs'"
+        (click)="activeTab = 'utilisateurs'">
+        <span class="nav-icon">👥</span>
+        <span>Utilisateurs</span>
       </div>
     </nav>
-
     <div class="sidebar-footer">
       <div class="avatar">A</div>
       <div class="user-info">
@@ -33,75 +42,199 @@
   <!-- MAIN -->
   <main class="main">
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div>
+    <!-- ===== DASHBOARD ===== -->
+    <div *ngIf="activeTab === 'dashboard'">
+      <div class="topbar">
         <h1 class="topbar-title">Tableau de bord</h1>
         <p class="topbar-sub">Vue d'ensemble du système</p>
       </div>
-    </div>
 
-    <!-- STATS -->
-    <div class="stats-grid">
-      <div class="stat-card" *ngFor="let stat of stats; let i = index"
-        [style.animation-delay]="(i * 0.1) + 's'">
-        <div class="stat-icon">{{ stat.icon }}</div>
-        <div class="stat-value">{{ stat.value }}</div>
-        <div class="stat-label">{{ stat.label }}</div>
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats; let i = index"
+          [style.animation-delay]="(i * 0.1) + 's'">
+          <div class="stat-icon">{{ stat.icon }}</div>
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+
+      <!-- Raccourci générer ID -->
+      <div class="quick-action" (click)="activeTab = 'etudiants'; showGenerateForm = true">
+        <div class="qa-icon">🎓</div>
+        <div class="qa-text">
+          <strong>Générer un ID étudiant</strong>
+          <span>Créer un identifiant pour un nouvel étudiant</span>
+        </div>
+        <div class="qa-arrow">→</div>
       </div>
     </div>
 
-    <!-- USERS TABLE -->
-    <div class="section">
-      <div class="section-header">
-        <h2>👥 Utilisateurs</h2>
-        <span class="badge">{{ totalUsers }} total</span>
+    <!-- ===== ÉTUDIANTS ===== -->
+    <div *ngIf="activeTab === 'etudiants'">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Gestion des étudiants</h1>
+          <p class="topbar-sub">Générez et gérez les identifiants étudiants</p>
+        </div>
+        <button class="btn-generate" (click)="showGenerateForm = !showGenerateForm">
+          {{ showGenerateForm ? '✕ Fermer' : '+ Nouvel étudiant' }}
+        </button>
       </div>
 
-      <!-- Loading -->
-      <div class="loading" *ngIf="loading">
-        <div class="spinner"></div>
-        <span>Chargement...</span>
+      <!-- FORMULAIRE GÉNÉRATION -->
+      <div class="generate-card" *ngIf="showGenerateForm">
+        <div class="generate-header">
+          <h2>🎓 Générer un identifiant étudiant</h2>
+          <p>Remplissez les informations pour générer l'ID unique</p>
+        </div>
+
+        <div class="generate-grid">
+          <div class="gen-field">
+            <label>PRÉNOM <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="nouveauPrenom" placeholder="Ex: Asma" />
+          </div>
+          <div class="gen-field">
+            <label>NOM <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="nouveauNom" placeholder="Ex: Mbarek" />
+          </div>
+          <div class="gen-field">
+            <label>FILIÈRE <span class="req">*</span></label>
+            <select [(ngModel)]="nouvelleFiliere">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let f of filieres" [value]="f">{{ f }}</option>
+            </select>
+          </div>
+          <div class="gen-field">
+            <label>NIVEAU <span class="req">*</span></label>
+            <select [(ngModel)]="nouveauNiveau">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let n of niveaux" [value]="n">{{ n }}</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-gen-submit" (click)="genererEtudiant()">
+          ✨ Générer l'identifiant
+        </button>
+
+        <!-- RÉSULTAT ID GÉNÉRÉ -->
+        <div class="id-result" *ngIf="idGenere">
+          <div class="id-result-label">✅ Identifiant généré avec succès !</div>
+          <div class="id-box">
+            <span class="id-value">{{ idGenere }}</span>
+            <button class="btn-copy" (click)="copierID()">
+              {{ idCopie ? '✅ Copié !' : '📋 Copier' }}
+            </button>
+          </div>
+          <p class="id-hint">
+            Communiquez cet identifiant à <strong>{{ nouveauPrenom }} {{ nouveauNom }}</strong>
+            pour qu'il puisse s'inscrire sur le chatbot.
+          </p>
+          <button class="btn-reset" (click)="resetForm()">+ Générer un autre</button>
+        </div>
       </div>
 
-      <!-- Table -->
-      <div class="table-wrap" *ngIf="!loading && users.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nom d'utilisateur</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td>#{{ user.id }}</td>
-              <td>
-                <div class="user-cell">
-                  <div class="mini-avatar">{{ user.username[0].toUpperCase() }}</div>
-                  {{ user.username }}
-                </div>
-              </td>
-              <td>{{ user.email }}</td>
-              <td>
-                <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
-                  {{ user.role }}
-                </span>
-              </td>
-              <td><span class="status-badge">✅ Actif</span></td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- LISTE ÉTUDIANTS -->
+      <div class="section">
+        <div class="section-header">
+          <h2>🎓 Étudiants enregistrés</h2>
+          <span class="badge">{{ etudiantsEnregistres.length }} total</span>
+        </div>
+
+        <div class="table-wrap" *ngIf="etudiantsEnregistres.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>ID FACULTÉ</th>
+                <th>NOM COMPLET</th>
+                <th>FILIÈRE</th>
+                <th>NIVEAU</th>
+                <th>DATE</th>
+                <th>STATUT</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of etudiantsEnregistres">
+                <td><span class="id-cell">{{ e.id }}</span></td>
+                <td>
+                  <div class="user-cell">
+                    <div class="mini-avatar">{{ e.prenom[0] }}</div>
+                    {{ e.prenom }} {{ e.nom }}
+                  </div>
+                </td>
+                <td>{{ e.filiere }}</td>
+                <td><span class="niveau-badge">{{ e.niveau }}</span></td>
+                <td>{{ e.dateCreation }}</td>
+                <td><span class="statut-badge">⏳ {{ e.statut }}</span></td>
+                <td>
+                  <button class="btn-delete" (click)="supprimerEtudiant(e.id)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="etudiantsEnregistres.length === 0">
+          <p>🎓 Aucun étudiant enregistré — cliquez sur "+ Nouvel étudiant"</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== UTILISATEURS ===== -->
+    <div *ngIf="activeTab === 'utilisateurs'">
+      <div class="topbar">
+        <h1 class="topbar-title">Utilisateurs</h1>
+        <p class="topbar-sub">Liste des comptes enregistrés</p>
       </div>
 
-      <!-- Vide -->
-      <div class="empty-state" *ngIf="!loading && users.length === 0">
-        <p>😶 Aucun utilisateur trouvé</p>
-      </div>
+      <div class="section">
+        <div class="section-header">
+          <h2>👥 Utilisateurs</h2>
+          <span class="badge">{{ totalUsers }} total</span>
+        </div>
 
+        <div class="loading" *ngIf="loading">
+          <div class="spinner"></div>
+          <span>Chargement...</span>
+        </div>
+
+        <div class="table-wrap" *ngIf="!loading && users.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NOM D'UTILISATEUR</th>
+                <th>EMAIL</th>
+                <th>RÔLE</th>
+                <th>STATUT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>#{{ user.id }}</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="mini-avatar">{{ user.username[0].toUpperCase() }}</div>
+                    {{ user.username }}
+                  </div>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
+                    {{ user.role }}
+                  </span>
+                </td>
+                <td><span class="status-badge">✅ Actif</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && users.length === 0">
+          <p>😶 Aucun utilisateur trouvé</p>
+        </div>
+      </div>
     </div>
 
   </main>

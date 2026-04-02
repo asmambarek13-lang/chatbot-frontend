@@ -27,16 +27,12 @@
 
     <div class="history-label">{{ selectedLang === 'ar' ? 'السجل' : 'Historique' }}</div>
 
-    <!-- HISTORIQUE CHARGEMENT -->
     <div class="history-loading" *ngIf="historyLoading">
       <div class="mini-spinner"></div>
       <span>{{ selectedLang === 'ar' ? 'تحميل...' : 'Chargement...' }}</span>
     </div>
 
-    <!-- HISTORIQUE LISTE -->
     <div class="history-list" *ngIf="!historyLoading">
-
-      <!-- Conversation actuelle -->
       <div class="history-item active" *ngIf="messages.length > 0">
         <span class="hist-icon">💬</span>
         <div class="hist-info">
@@ -44,12 +40,9 @@
           <span class="hist-time">{{ messages[0]?.timestamp ? getTime(messages[0].timestamp) : '' }}</span>
         </div>
       </div>
-
-      <!-- Pas de messages -->
       <div class="history-empty" *ngIf="messages.length === 0">
         <span>{{ selectedLang === 'ar' ? 'لا توجد محادثات' : 'Aucune conversation' }}</span>
       </div>
-
     </div>
 
     <div class="sidebar-footer">
@@ -58,14 +51,12 @@
         <div class="user-name">{{ selectedLang === 'ar' ? 'مستخدم' : 'Utilisateur' }}</div>
         <div class="user-role">{{ selectedLang === 'ar' ? 'متصل' : 'Connecté' }}</div>
       </div>
-      <button class="logout-btn" (click)="logout()" title="Déconnexion">🚪</button>
+      <button class="logout-btn" (click)="logout()">🚪</button>
     </div>
   </aside>
 
   <!-- MAIN -->
   <main class="main">
-
-    <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
         <div class="bot-dot"></div>
@@ -81,10 +72,7 @@
       </div>
     </div>
 
-    <!-- MESSAGES -->
     <div class="messages-area" #messagesEnd>
-
-      <!-- WELCOME -->
       <div class="welcome" *ngIf="welcomeShown">
         <div class="welcome-glow"></div>
         <div class="welcome-icon">👋</div>
@@ -95,12 +83,9 @@
         </div>
       </div>
 
-      <!-- MESSAGES LIST -->
-      <div *ngFor="let msg of messages"
-           class="msg"
+      <div *ngFor="let msg of messages" class="msg"
            [class.user]="msg.sender === 'user'"
-           [class.bot]="msg.sender === 'bot'"
-           [class.rtl-msg]="msg.language === 'ar'">
+           [class.bot]="msg.sender === 'bot'">
         <div class="msg-avatar">{{ msg.sender === 'user' ? 'U' : '🤖' }}</div>
         <div class="msg-body">
           <div class="msg-bubble" [dir]="msg.language === 'ar' ? 'rtl' : 'ltr'">{{ msg.content }}</div>
@@ -108,26 +93,18 @@
         </div>
       </div>
 
-      <!-- TYPING -->
       <div class="typing" *ngIf="loading">
         <div class="bot-ava">🤖</div>
-        <div class="typing-dots">
-          <span></span><span></span><span></span>
-        </div>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
       </div>
-
     </div>
 
-    <!-- INPUT -->
     <div class="input-area">
       <div class="input-box">
-        <textarea
-          [(ngModel)]="messageInput"
-          (keydown)="handleKey($event)"
+        <textarea [(ngModel)]="messageInput" (keydown)="handleKey($event)"
           [dir]="selectedLang === 'ar' ? 'rtl' : 'ltr'"
           [placeholder]="selectedLang === 'ar' ? 'اكتب رسالتك هنا...' : 'Écrivez votre message...'"
-          rows="1">
-        </textarea>
+          rows="1"></textarea>
         <button class="send-btn" (click)="sendMessage()" [disabled]="loading">
           <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
@@ -138,44 +115,147 @@
         {{ selectedLang === 'ar' ? 'Enter للإرسال · Shift+Enter لسطر جديد' : 'Entrée pour envoyer · Shift+Entrée pour nouvelle ligne' }}
       </div>
     </div>
-
   </main>
 </div>
 
-<!-- MODAL DOCUMENT -->
+<!-- ✅ MODAL DOCUMENT AMÉLIORÉ -->
 <div class="modal-overlay" *ngIf="showDocModal" (click)="closeDocModal()">
-  <div class="modal" (click)="$event.stopPropagation()" [dir]="selectedLang === 'ar' ? 'rtl' : 'ltr'">
+  <div class="modal modal-large" (click)="$event.stopPropagation()" [dir]="selectedLang === 'ar' ? 'rtl' : 'ltr'">
+
     <div class="modal-header">
-      <h3>📄 {{ selectedLang === 'ar' ? 'توليد وثيقة' : 'Générer un document' }}</h3>
+      <h3>📄 {{ selectedLang === 'ar' ? 'توليد وثيقة رسمية' : 'Générer un document officiel' }}</h3>
       <button class="modal-close" (click)="closeDocModal()">✕</button>
     </div>
 
-    <div class="modal-field">
-      <label>{{ selectedLang === 'ar' ? 'نوع الوثيقة' : 'Type de document' }}</label>
-      <select [(ngModel)]="docType">
-        <option value="attestation">{{ selectedLang === 'ar' ? 'شهادة عمل' : 'Attestation de travail' }}</option>
-        <option value="certificat">{{ selectedLang === 'ar' ? 'شهادة تمدرس' : 'Certificat de scolarité' }}</option>
-        <option value="demande">{{ selectedLang === 'ar' ? 'رسالة طلب' : 'Lettre de demande' }}</option>
-      </select>
-    </div>
+    <div class="modal-body-scroll">
 
-    <div class="modal-field">
-      <label>{{ selectedLang === 'ar' ? 'الاسم الكامل' : 'Nom complet' }}</label>
-      <input type="text" [(ngModel)]="docName" [placeholder]="selectedLang === 'ar' ? 'مثال: أحمد بن علي' : 'Ex: Ahmed Ben Ali'"/>
-    </div>
+      <!-- Type + Format -->
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>{{ selectedLang === 'ar' ? 'نوع الوثيقة' : 'Type de document' }}</label>
+          <select [(ngModel)]="docType">
+            <option value="attestation">{{ selectedLang === 'ar' ? 'شهادة عمل' : 'Attestation de travail' }}</option>
+            <option value="certificat">{{ selectedLang === 'ar' ? 'شهادة تمدرس' : 'Certificat de scolarité' }}</option>
+            <option value="demande">{{ selectedLang === 'ar' ? 'رسالة طلب' : 'Lettre de demande' }}</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>{{ selectedLang === 'ar' ? 'الصيغة' : 'Format' }}</label>
+          <select [(ngModel)]="docFormat">
+            <option value="PDF">📄 PDF</option>
+            <option value="DOCX">📝 Word (DOCX)</option>
+          </select>
+        </div>
+      </div>
 
-    <div class="modal-field">
-      <label>{{ selectedLang === 'ar' ? 'الصيغة' : 'Format' }}</label>
-      <select [(ngModel)]="docFormat">
-        <option value="PDF">PDF</option>
-        <option value="DOCX">Word (DOCX)</option>
-      </select>
+      <!-- Nom -->
+      <div class="modal-field">
+        <label>👤 {{ selectedLang === 'ar' ? 'الاسم والـلقب' : 'Nom et prénom' }}</label>
+        <input type="text" [(ngModel)]="docName"
+          [placeholder]="selectedLang === 'ar' ? 'مثال: رانيا بن علي' : 'Ex: Rania Ben Ali'"/>
+      </div>
+
+      <!-- Champs Attestation de travail -->
+      <ng-container *ngIf="docType === 'attestation'">
+        <div class="modal-section-title">
+          💼 {{ selectedLang === 'ar' ? 'المعلومات المهنية' : 'Informations professionnelles' }}
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>🏢 {{ selectedLang === 'ar' ? 'اسم المؤسسة / الشركة' : "Nom de l'employeur / société" }}</label>
+            <input type="text" [(ngModel)]="docEmployeur"
+              [placeholder]="selectedLang === 'ar' ? 'مثال: شركة ABC تونس' : 'Ex: Société ABC Tunis'"/>
+          </div>
+          <div class="modal-field">
+            <label>💼 {{ selectedLang === 'ar' ? 'المنصب' : 'Poste occupé' }}</label>
+            <input type="text" [(ngModel)]="docPoste"
+              [placeholder]="selectedLang === 'ar' ? 'مثال: مهندس معلوماتية' : 'Ex: Ingénieure informatique'"/>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>📅 {{ selectedLang === 'ar' ? 'تاريخ التوظيف' : "Date d'embauche" }}</label>
+            <input type="date" [(ngModel)]="docDateEmbauche"/>
+          </div>
+          <div class="modal-field">
+            <label>💰 {{ selectedLang === 'ar' ? 'الراتب الشهري (DT)' : 'Salaire mensuel (DT)' }}</label>
+            <input type="number" [(ngModel)]="docSalaire"
+              [placeholder]="selectedLang === 'ar' ? 'مثال: 2000' : 'Ex: 2000'"/>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>🏛️ {{ selectedLang === 'ar' ? 'القسم / الإدارة' : 'Département / Service' }}</label>
+          <input type="text" [(ngModel)]="docDepartement"
+            [placeholder]="selectedLang === 'ar' ? 'مثال: قسم المعلوماتية' : 'Ex: Département informatique'"/>
+        </div>
+      </ng-container>
+
+      <!-- Champs Certificat de scolarité -->
+      <ng-container *ngIf="docType === 'certificat'">
+        <div class="modal-section-title">
+          🎓 {{ selectedLang === 'ar' ? 'المعلومات الدراسية' : 'Informations scolaires' }}
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>🏫 {{ selectedLang === 'ar' ? 'اسم المؤسسة التعليمية' : 'Établissement scolaire' }}</label>
+            <input type="text" [(ngModel)]="docEtablissement"
+              [placeholder]="selectedLang === 'ar' ? 'مثال: جامعة تونس' : 'Ex: Université de Tunis'"/>
+          </div>
+          <div class="modal-field">
+            <label>📚 {{ selectedLang === 'ar' ? 'الاختصاص' : 'Spécialité / Filière' }}</label>
+            <input type="text" [(ngModel)]="docFiliere"
+              [placeholder]="selectedLang === 'ar' ? 'مثال: هندسة معلوماتية' : 'Ex: Génie informatique'"/>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>📅 {{ selectedLang === 'ar' ? 'السنة الدراسية' : 'Année scolaire' }}</label>
+            <input type="text" [(ngModel)]="docAnnee" placeholder="2024/2025"/>
+          </div>
+          <div class="modal-field">
+            <label>🎯 {{ selectedLang === 'ar' ? 'المستوى' : 'Niveau' }}</label>
+            <select [(ngModel)]="docNiveau">
+              <option value="Licence 1">Licence 1</option>
+              <option value="Licence 2">Licence 2</option>
+              <option value="Licence 3">Licence 3</option>
+              <option value="Master 1">Master 1</option>
+              <option value="Master 2">Master 2</option>
+              <option value="Doctorat">Doctorat</option>
+            </select>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Champs Lettre de demande -->
+      <ng-container *ngIf="docType === 'demande'">
+        <div class="modal-section-title">
+          ✉️ {{ selectedLang === 'ar' ? 'معلومات الطلب' : 'Informations de la demande' }}
+        </div>
+        <div class="modal-field">
+          <label>🎯 {{ selectedLang === 'ar' ? 'موضوع الطلب' : 'Objet de la demande' }}</label>
+          <input type="text" [(ngModel)]="docObjet"
+            [placeholder]="selectedLang === 'ar' ? 'مثال: طلب تربص' : 'Ex: Demande de stage'"/>
+        </div>
+        <div class="modal-field">
+          <label>👤 {{ selectedLang === 'ar' ? 'المرسل إليه' : 'Destinataire' }}</label>
+          <input type="text" [(ngModel)]="docDestinataire"
+            [placeholder]="selectedLang === 'ar' ? 'مثال: السيد المدير العام' : 'Ex: Monsieur le Directeur Général'"/>
+        </div>
+        <div class="modal-field">
+          <label>📝 {{ selectedLang === 'ar' ? 'محتوى الطلب' : 'Contenu de la demande' }}</label>
+          <textarea [(ngModel)]="docContenu" rows="3"
+            [placeholder]="selectedLang === 'ar' ? 'اكتب محتوى طلبك هنا...' : 'Décrivez votre demande ici...'"></textarea>
+        </div>
+      </ng-container>
+
     </div>
 
     <div class="modal-actions">
-      <button class="btn-cancel" (click)="closeDocModal()">{{ selectedLang === 'ar' ? 'إلغاء' : 'Annuler' }}</button>
-      <button class="btn-generate" (click)="generateDocument()">
-        ⬇ {{ selectedLang === 'ar' ? 'توليد' : 'Générer' }}
+      <button class="btn-cancel" (click)="closeDocModal()">
+        ✕ {{ selectedLang === 'ar' ? 'إلغاء' : 'Annuler' }}
+      </button>
+      <button class="btn-generate" (click)="generateDocument()" [disabled]="!docName">
+        ⬇ {{ selectedLang === 'ar' ? 'توليد الوثيقة' : 'Générer le document' }}
       </button>
     </div>
   </div>
