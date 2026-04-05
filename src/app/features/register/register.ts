@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/auth';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './register.scss'
 })
 export class RegisterComponent {
-  constructor(private router: Router) {}
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   lang = 'fr';
   currentStep = 1;
@@ -20,6 +25,7 @@ export class RegisterComponent {
   showPwd = false;
   identifiantValide = false;
   identifiantInvalide = false;
+  loadingSubmit = false;
 
   steps = ['Identité', 'Contact', 'Bac', 'Formation', 'Finance', 'Compte'];
   bacYears = Array.from({length: 15}, (_, i) => (2024 - i).toString());
@@ -112,10 +118,27 @@ export class RegisterComponent {
     return true;
   }
 
+  // ✅ LA SEULE CHOSE QUI CHANGE
   submitForm() {
     if (!this.validateStep()) return;
-    console.log('Formulaire soumis:', this.form);
-    this.submitted = true;
+
+    this.loadingSubmit = true;
+
+    this.authService.register({
+      username: this.form.username,
+      email: this.form.email,
+      password: this.form.password
+    }).subscribe({
+      next: () => {
+        this.loadingSubmit = false;
+        this.submitted = true;
+      },
+      error: (err) => {
+        this.loadingSubmit = false;
+        const msg = err.error?.message || 'Erreur lors de l\'inscription';
+        alert('❌ ' + msg);
+      }
+    });
   }
 
   goToLogin() { this.router.navigate(['/login']); }

@@ -8,27 +8,40 @@
         <span class="logo-text">Chatbot PFE</span>
       </div>
     </div>
+
     <nav class="nav">
+      <div class="nav-item" [class.active]="activeTab==='dashboard'" (click)="activeTab='dashboard'">
+        <span class="nav-icon">📊</span><span>Tableau de bord</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='etudiants'" (click)="activeTab='etudiants'">
+        <span class="nav-icon">🎓</span><span>Étudiants</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='professeurs'" (click)="activeTab='professeurs'; showForm=false">
+        <span class="nav-icon">👨‍🏫</span><span>Professeurs</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='salles'" (click)="activeTab='salles'; showForm=false">
+        <span class="nav-icon">🏫</span><span>Salles</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='matieres'" (click)="activeTab='matieres'; showForm=false">
+        <span class="nav-icon">📚</span><span>Matières</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='emploi'" (click)="activeTab='emploi'; showForm=false">
+        <span class="nav-icon">📅</span><span>Emploi du temps</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='notes'" (click)="activeTab='notes'; showForm=false">
+        <span class="nav-icon">📝</span><span>Notes</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='rag'" (click)="activeTab='rag'; loadRagDocuments()">
+        <span class="nav-icon">🧠</span><span>Base RAG</span>
+      </div>
+      <div class="nav-item" [class.active]="activeTab==='utilisateurs'" (click)="activeTab='utilisateurs'">
+        <span class="nav-icon">👥</span><span>Utilisateurs</span>
+      </div>
       <div class="nav-item" (click)="goToChat()">
-        <span class="nav-icon">💬</span>
-        <span>Chat</span>
-      </div>
-      <div class="nav-item" [class.active]="activeTab === 'dashboard'"
-        (click)="activeTab = 'dashboard'">
-        <span class="nav-icon">📊</span>
-        <span>Tableau de bord</span>
-      </div>
-      <div class="nav-item" [class.active]="activeTab === 'etudiants'"
-        (click)="activeTab = 'etudiants'">
-        <span class="nav-icon">🎓</span>
-        <span>Étudiants</span>
-      </div>
-      <div class="nav-item" [class.active]="activeTab === 'utilisateurs'"
-        (click)="activeTab = 'utilisateurs'">
-        <span class="nav-icon">👥</span>
-        <span>Utilisateurs</span>
+        <span class="nav-icon">💬</span><span>Chat</span>
       </div>
     </nav>
+
     <div class="sidebar-footer">
       <div class="avatar">A</div>
       <div class="user-info">
@@ -42,118 +55,144 @@
   <!-- MAIN -->
   <main class="main">
 
-    <!-- ===== DASHBOARD ===== -->
-    <div *ngIf="activeTab === 'dashboard'">
+    <!-- ══════ DASHBOARD ══════ -->
+    <div *ngIf="activeTab==='dashboard'">
       <div class="topbar">
-        <h1 class="topbar-title">Tableau de bord</h1>
-        <p class="topbar-sub">Vue d'ensemble du système</p>
+        <div>
+          <h1 class="topbar-title">Tableau de bord</h1>
+          <p class="topbar-sub">Vue d'ensemble de la faculté</p>
+        </div>
       </div>
-
       <div class="stats-grid">
-        <div class="stat-card" *ngFor="let stat of stats; let i = index"
-          [style.animation-delay]="(i * 0.1) + 's'">
-          <div class="stat-icon">{{ stat.icon }}</div>
-          <div class="stat-value">{{ stat.value }}</div>
-          <div class="stat-label">{{ stat.label }}</div>
+        <div class="stat-card" (click)="activeTab='utilisateurs'">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value">{{ stats.totalUsers }}</div>
+          <div class="stat-label">Utilisateurs</div>
+        </div>
+        <div class="stat-card" (click)="activeTab='professeurs'; showForm=false">
+          <div class="stat-icon">👨‍🏫</div>
+          <div class="stat-value">{{ stats.totalProfesseurs }}</div>
+          <div class="stat-label">Professeurs</div>
+        </div>
+        <div class="stat-card" (click)="activeTab='salles'; showForm=false">
+          <div class="stat-icon">🏫</div>
+          <div class="stat-value">{{ stats.totalSalles }}</div>
+          <div class="stat-label">Salles</div>
+        </div>
+        <div class="stat-card" (click)="activeTab='matieres'; showForm=false">
+          <div class="stat-icon">📚</div>
+          <div class="stat-value">{{ stats.totalMatieres }}</div>
+          <div class="stat-label">Matières</div>
+        </div>
+        <div class="stat-card" (click)="activeTab='emploi'; showForm=false">
+          <div class="stat-icon">📅</div>
+          <div class="stat-value">{{ stats.totalCours }}</div>
+          <div class="stat-label">Cours planifiés</div>
+        </div>
+        <div class="stat-card" (click)="activeTab='etudiants'">
+          <div class="stat-icon">🎓</div>
+          <div class="stat-value">{{ etudiantsEnregistres.length }}</div>
+          <div class="stat-label">Étudiants inscrits</div>
         </div>
       </div>
 
-      <!-- Raccourci générer ID -->
-      <div class="quick-action" (click)="activeTab = 'etudiants'; showGenerateForm = true">
-        <div class="qa-icon">🎓</div>
-        <div class="qa-text">
-          <strong>Générer un ID étudiant</strong>
-          <span>Créer un identifiant pour un nouvel étudiant</span>
+      <div class="quick-actions">
+        <div class="quick-action" (click)="activeTab='etudiants'; showGenerateForm=true">
+          <div class="qa-icon">🎓</div>
+          <div class="qa-text">
+            <strong>Générer ID étudiant</strong>
+            <span>Créer un identifiant pour un nouvel étudiant</span>
+          </div>
+          <span class="qa-arrow">→</span>
         </div>
-        <div class="qa-arrow">→</div>
+        <div class="quick-action" (click)="activeTab='emploi'; showForm=true">
+          <div class="qa-icon">📅</div>
+          <div class="qa-text">
+            <strong>Ajouter un cours</strong>
+            <span>Planifier un cours dans l'emploi du temps</span>
+          </div>
+          <span class="qa-arrow">→</span>
+        </div>
+        <div class="quick-action" (click)="activeTab='notes'; showForm=true">
+          <div class="qa-icon">📝</div>
+          <div class="qa-text">
+            <strong>Saisir des notes</strong>
+            <span>Ajouter les notes d'un étudiant</span>
+          </div>
+          <span class="qa-arrow">→</span>
+        </div>
+        <div class="quick-action" (click)="activeTab='rag'; loadRagDocuments()">
+          <div class="qa-icon">🧠</div>
+          <div class="qa-text">
+            <strong>Base de connaissances RAG</strong>
+            <span>Uploader des documents pour enrichir le chatbot</span>
+          </div>
+          <span class="qa-arrow">→</span>
+        </div>
       </div>
     </div>
 
-    <!-- ===== ÉTUDIANTS ===== -->
-    <div *ngIf="activeTab === 'etudiants'">
+    <!-- ══════ ÉTUDIANTS ══════ -->
+    <div *ngIf="activeTab==='etudiants'">
       <div class="topbar">
         <div>
           <h1 class="topbar-title">Gestion des étudiants</h1>
-          <p class="topbar-sub">Générez et gérez les identifiants étudiants</p>
+          <p class="topbar-sub">Générez et gérez les identifiants</p>
         </div>
-        <button class="btn-generate" (click)="showGenerateForm = !showGenerateForm">
+        <button class="btn-add" (click)="showGenerateForm=!showGenerateForm">
           {{ showGenerateForm ? '✕ Fermer' : '+ Nouvel étudiant' }}
         </button>
       </div>
 
-      <!-- FORMULAIRE GÉNÉRATION -->
-      <div class="generate-card" *ngIf="showGenerateForm">
-        <div class="generate-header">
-          <h2>🎓 Générer un identifiant étudiant</h2>
-          <p>Remplissez les informations pour générer l'ID unique</p>
-        </div>
-
-        <div class="generate-grid">
-          <div class="gen-field">
-            <label>PRÉNOM <span class="req">*</span></label>
+      <div class="form-card" *ngIf="showGenerateForm">
+        <div class="form-card-title">🎓 Générer un identifiant étudiant</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>PRÉNOM *</label>
             <input type="text" [(ngModel)]="nouveauPrenom" placeholder="Ex: Asma" />
           </div>
-          <div class="gen-field">
-            <label>NOM <span class="req">*</span></label>
+          <div class="field">
+            <label>NOM *</label>
             <input type="text" [(ngModel)]="nouveauNom" placeholder="Ex: Mbarek" />
           </div>
-          <div class="gen-field">
-            <label>FILIÈRE <span class="req">*</span></label>
+          <div class="field">
+            <label>FILIÈRE *</label>
             <select [(ngModel)]="nouvelleFiliere">
               <option value="">-- Choisir --</option>
               <option *ngFor="let f of filieres" [value]="f">{{ f }}</option>
             </select>
           </div>
-          <div class="gen-field">
-            <label>NIVEAU <span class="req">*</span></label>
+          <div class="field">
+            <label>NIVEAU *</label>
             <select [(ngModel)]="nouveauNiveau">
               <option value="">-- Choisir --</option>
               <option *ngFor="let n of niveaux" [value]="n">{{ n }}</option>
             </select>
           </div>
         </div>
-
-        <button class="btn-gen-submit" (click)="genererEtudiant()">
-          ✨ Générer l'identifiant
-        </button>
-
-        <!-- RÉSULTAT ID GÉNÉRÉ -->
+        <button class="btn-submit" (click)="genererEtudiant()">✨ Générer l'identifiant</button>
         <div class="id-result" *ngIf="idGenere">
-          <div class="id-result-label">✅ Identifiant généré avec succès !</div>
+          <div class="id-result-label">✅ Identifiant généré !</div>
           <div class="id-box">
             <span class="id-value">{{ idGenere }}</span>
-            <button class="btn-copy" (click)="copierID()">
-              {{ idCopie ? '✅ Copié !' : '📋 Copier' }}
-            </button>
+            <button class="btn-copy" (click)="copierID()">{{ idCopie ? '✅ Copié !' : '📋 Copier' }}</button>
           </div>
-          <p class="id-hint">
-            Communiquez cet identifiant à <strong>{{ nouveauPrenom }} {{ nouveauNom }}</strong>
-            pour qu'il puisse s'inscrire sur le chatbot.
-          </p>
-          <button class="btn-reset" (click)="resetForm()">+ Générer un autre</button>
+          <p class="id-hint">Donnez cet ID à <strong>{{ nouveauPrenom }} {{ nouveauNom }}</strong> pour s'inscrire.</p>
+          <button class="btn-reset" (click)="resetGenerate()">+ Générer un autre</button>
         </div>
       </div>
 
-      <!-- LISTE ÉTUDIANTS -->
       <div class="section">
         <div class="section-header">
           <h2>🎓 Étudiants enregistrés</h2>
-          <span class="badge">{{ etudiantsEnregistres.length }} total</span>
+          <span class="badge">{{ etudiantsEnregistres.length }}</span>
         </div>
-
         <div class="table-wrap" *ngIf="etudiantsEnregistres.length > 0">
           <table>
-            <thead>
-              <tr>
-                <th>ID FACULTÉ</th>
-                <th>NOM COMPLET</th>
-                <th>FILIÈRE</th>
-                <th>NIVEAU</th>
-                <th>DATE</th>
-                <th>STATUT</th>
-                <th>ACTION</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>ID FACULTÉ</th><th>NOM COMPLET</th>
+              <th>FILIÈRE</th><th>NIVEAU</th><th>DATE</th><th>ACTION</th>
+            </tr></thead>
             <tbody>
               <tr *ngFor="let e of etudiantsEnregistres">
                 <td><span class="id-cell">{{ e.id }}</span></td>
@@ -166,74 +205,493 @@
                 <td>{{ e.filiere }}</td>
                 <td><span class="niveau-badge">{{ e.niveau }}</span></td>
                 <td>{{ e.dateCreation }}</td>
-                <td><span class="statut-badge">⏳ {{ e.statut }}</span></td>
+                <td><button class="btn-delete" (click)="supprimerEtudiant(e.id)">🗑️</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" *ngIf="etudiantsEnregistres.length===0">
+          🎓 Aucun étudiant — cliquez sur "+ Nouvel étudiant"
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ PROFESSEURS ══════ -->
+    <div *ngIf="activeTab==='professeurs'">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Gestion des professeurs</h1>
+          <p class="topbar-sub">{{ professeurs.length }} professeur(s)</p>
+        </div>
+        <button class="btn-add" (click)="showForm=true; editMode=false; resetForm()">
+          + Nouveau professeur
+        </button>
+      </div>
+
+      <div class="form-card" *ngIf="showForm">
+        <div class="form-card-title">{{ editMode ? '✏️ Modifier professeur' : '👨‍🏫 Nouveau professeur' }}</div>
+        <div class="form-grid">
+          <div class="field"><label>NOM *</label>
+            <input type="text" [(ngModel)]="profForm.nom" placeholder="Ex: Ben Ali" /></div>
+          <div class="field"><label>PRÉNOM *</label>
+            <input type="text" [(ngModel)]="profForm.prenom" placeholder="Ex: Ahmed" /></div>
+          <div class="field"><label>EMAIL *</label>
+            <input type="email" [(ngModel)]="profForm.email" placeholder="ahmed@faculte.tn" /></div>
+          <div class="field"><label>TÉLÉPHONE</label>
+            <input type="text" [(ngModel)]="profForm.telephone" placeholder="+216 XX XXX XXX" /></div>
+          <div class="field"><label>SPÉCIALITÉ</label>
+            <input type="text" [(ngModel)]="profForm.specialite" placeholder="Ex: Informatique" /></div>
+          <div class="field">
+            <label>GRADE</label>
+            <select [(ngModel)]="profForm.grade">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let g of grades" [value]="g">{{ g }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="showForm=false; resetForm()">Annuler</button>
+          <button class="btn-submit" (click)="saveProfesseur()">
+            {{ editMode ? '✅ Mettre à jour' : '✅ Enregistrer' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2>👨‍🏫 Liste des professeurs</h2>
+          <span class="badge">{{ professeurs.length }}</span>
+        </div>
+        <div class="table-wrap" *ngIf="professeurs.length > 0">
+          <table>
+            <thead><tr>
+              <th>NOM</th><th>EMAIL</th><th>SPÉCIALITÉ</th><th>GRADE</th><th>ACTIONS</th>
+            </tr></thead>
+            <tbody>
+              <tr *ngFor="let p of professeurs">
                 <td>
-                  <button class="btn-delete" (click)="supprimerEtudiant(e.id)">🗑️</button>
+                  <div class="user-cell">
+                    <div class="mini-avatar">{{ p.prenom[0] }}</div>
+                    {{ p.prenom }} {{ p.nom }}
+                  </div>
+                </td>
+                <td>{{ p.email }}</td>
+                <td>{{ p.specialite }}</td>
+                <td><span class="grade-badge">{{ p.grade }}</span></td>
+                <td>
+                  <button class="btn-edit" (click)="editProfesseur(p)">✏️</button>
+                  <button class="btn-delete" (click)="deleteProfesseur(p.id)">🗑️</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <div class="empty-state" *ngIf="etudiantsEnregistres.length === 0">
-          <p>🎓 Aucun étudiant enregistré — cliquez sur "+ Nouvel étudiant"</p>
-        </div>
+        <div class="empty-state" *ngIf="professeurs.length===0">👨‍🏫 Aucun professeur</div>
       </div>
     </div>
 
-    <!-- ===== UTILISATEURS ===== -->
-    <div *ngIf="activeTab === 'utilisateurs'">
+    <!-- ══════ SALLES ══════ -->
+    <div *ngIf="activeTab==='salles'">
       <div class="topbar">
-        <h1 class="topbar-title">Utilisateurs</h1>
-        <p class="topbar-sub">Liste des comptes enregistrés</p>
+        <div>
+          <h1 class="topbar-title">Gestion des salles</h1>
+          <p class="topbar-sub">{{ salles.length }} salle(s)</p>
+        </div>
+        <button class="btn-add" (click)="showForm=true; editMode=false; resetForm()">
+          + Nouvelle salle
+        </button>
+      </div>
+
+      <div class="form-card" *ngIf="showForm">
+        <div class="form-card-title">{{ editMode ? '✏️ Modifier salle' : '🏫 Nouvelle salle' }}</div>
+        <div class="form-grid">
+          <div class="field"><label>NOM *</label>
+            <input type="text" [(ngModel)]="salleForm.nom" placeholder="Ex: Salle A1" /></div>
+          <div class="field">
+            <label>TYPE</label>
+            <select [(ngModel)]="salleForm.type">
+              <option *ngFor="let t of typesSalle" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field"><label>CAPACITÉ</label>
+            <input type="number" [(ngModel)]="salleForm.capacite" /></div>
+          <div class="field"><label>BÂTIMENT</label>
+            <input type="text" [(ngModel)]="salleForm.batiment" placeholder="Ex: Bâtiment A" /></div>
+          <div class="field full"><label>ÉQUIPEMENTS</label>
+            <input type="text" [(ngModel)]="salleForm.equipements" placeholder="Ex: Projecteur, PC" /></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="showForm=false; resetForm()">Annuler</button>
+          <button class="btn-submit" (click)="saveSalle()">
+            {{ editMode ? '✅ Mettre à jour' : '✅ Enregistrer' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="salles-grid">
+        <div class="salle-card" *ngFor="let s of salles">
+          <div class="salle-icon">
+            {{ s.type==='TP'||s.type==='labo' ? '🔬' : s.type==='amphi' ? '🎭' : '🏫' }}
+          </div>
+          <div class="salle-info">
+            <div class="salle-nom">{{ s.nom }}</div>
+            <div class="salle-details">
+              <span class="salle-type">{{ s.type }}</span>
+              <span>👥 {{ s.capacite }} places</span>
+              <span>📍 {{ s.batiment }}</span>
+            </div>
+            <div class="salle-equip" *ngIf="s.equipements">{{ s.equipements }}</div>
+          </div>
+          <div class="salle-actions">
+            <button class="btn-edit" (click)="editSalle(s)">✏️</button>
+            <button class="btn-delete" (click)="deleteSalle(s.id)">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="salles.length===0">🏫 Aucune salle</div>
+    </div>
+
+    <!-- ══════ MATIÈRES ══════ -->
+    <div *ngIf="activeTab==='matieres'">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Gestion des matières</h1>
+          <p class="topbar-sub">{{ matieres.length }} matière(s)</p>
+        </div>
+        <button class="btn-add" (click)="showForm=true; editMode=false; resetForm()">
+          + Nouvelle matière
+        </button>
+      </div>
+
+      <div class="form-card" *ngIf="showForm">
+        <div class="form-card-title">📚 Nouvelle matière</div>
+        <div class="form-grid">
+          <div class="field"><label>NOM *</label>
+            <input type="text" [(ngModel)]="matiereForm.nom" placeholder="Ex: Algorithmique" /></div>
+          <div class="field"><label>CODE</label>
+            <input type="text" [(ngModel)]="matiereForm.code" placeholder="Ex: INFO101" /></div>
+          <div class="field"><label>COEFFICIENT</label>
+            <input type="number" [(ngModel)]="matiereForm.coefficient" min="1" max="5" /></div>
+          <div class="field">
+            <label>FILIÈRE</label>
+            <select [(ngModel)]="matiereForm.filiere">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let f of filieres" [value]="f">{{ f }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>SEMESTRE</label>
+            <select [(ngModel)]="matiereForm.semestre">
+              <option value="S1">Semestre 1</option>
+              <option value="S2">Semestre 2</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>PROFESSEUR</label>
+            <select [(ngModel)]="matiereForm.professeurId">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let p of professeurs" [value]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+            </select>
+          </div>
+          <div class="field"><label>HEURES CM</label>
+            <input type="number" [(ngModel)]="matiereForm.heuresCm" min="0" /></div>
+          <div class="field"><label>HEURES TD</label>
+            <input type="number" [(ngModel)]="matiereForm.heuresTd" min="0" /></div>
+          <div class="field"><label>HEURES TP</label>
+            <input type="number" [(ngModel)]="matiereForm.heuresTp" min="0" /></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="showForm=false; resetForm()">Annuler</button>
+          <button class="btn-submit" (click)="saveMatiere()">✅ Enregistrer</button>
+        </div>
       </div>
 
       <div class="section">
         <div class="section-header">
-          <h2>👥 Utilisateurs</h2>
-          <span class="badge">{{ totalUsers }} total</span>
+          <h2>📚 Liste des matières</h2>
+          <span class="badge">{{ matieres.length }}</span>
         </div>
-
-        <div class="loading" *ngIf="loading">
-          <div class="spinner"></div>
-          <span>Chargement...</span>
-        </div>
-
-        <div class="table-wrap" *ngIf="!loading && users.length > 0">
+        <div class="table-wrap" *ngIf="matieres.length > 0">
           <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NOM D'UTILISATEUR</th>
-                <th>EMAIL</th>
-                <th>RÔLE</th>
-                <th>STATUT</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>NOM</th><th>CODE</th><th>FILIÈRE</th>
+              <th>SEMESTRE</th><th>COEFF</th><th>PROFESSEUR</th><th>ACTIONS</th>
+            </tr></thead>
             <tbody>
-              <tr *ngFor="let user of users">
-                <td>#{{ user.id }}</td>
+              <tr *ngFor="let m of matieres">
+                <td><strong>{{ m.nom }}</strong></td>
+                <td><span class="code-badge">{{ m.code }}</span></td>
+                <td>{{ m.filiere }}</td>
+                <td>{{ m.semestre }}</td>
+                <td>{{ m.coefficient }}</td>
+                <td>{{ getProfNom(m.professeurId) }}</td>
+                <td>
+                  <button class="btn-edit" (click)="editMatiere(m)">✏️</button>
+                  <button class="btn-delete" (click)="deleteMatiere(m.id)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" *ngIf="matieres.length===0">📚 Aucune matière</div>
+      </div>
+    </div>
+
+    <!-- ══════ EMPLOI DU TEMPS ══════ -->
+    <div *ngIf="activeTab==='emploi'">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Emploi du temps</h1>
+          <p class="topbar-sub">Planification des cours</p>
+        </div>
+        <button class="btn-add" (click)="showForm=true; resetForm()">
+          + Ajouter un cours
+        </button>
+      </div>
+
+      <div class="form-card" *ngIf="showForm">
+        <div class="form-card-title">📅 Nouveau cours</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>JOUR *</label>
+            <select [(ngModel)]="emploiForm.jour">
+              <option *ngFor="let j of jours" [value]="j">{{ j }}</option>
+            </select>
+          </div>
+          <div class="field"><label>HEURE DÉBUT</label>
+            <input type="time" [(ngModel)]="emploiForm.heureDebut" /></div>
+          <div class="field"><label>HEURE FIN</label>
+            <input type="time" [(ngModel)]="emploiForm.heureFin" /></div>
+          <div class="field">
+            <label>TYPE</label>
+            <select [(ngModel)]="emploiForm.type">
+              <option *ngFor="let t of typesSeance" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>MATIÈRE *</label>
+            <select [(ngModel)]="emploiForm.matiere">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let m of matieres" [value]="m.nom">{{ m.nom }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>PROFESSEUR</label>
+            <select [(ngModel)]="emploiForm.professeurId"
+              (change)="emploiForm.professeur=getProfNom(emploiForm.professeurId)">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let p of professeurs" [value]="p.id">{{ p.prenom }} {{ p.nom }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>SALLE</label>
+            <select [(ngModel)]="emploiForm.salleId"
+              (change)="emploiForm.salle=getSalleNom(emploiForm.salleId)">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let s of salles" [value]="s.id">{{ s.nom }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>FILIÈRE</label>
+            <select [(ngModel)]="emploiForm.filiere">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let f of filieres" [value]="f">{{ f }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>ID ÉTUDIANT (userId)</label>
+            <input type="number" [(ngModel)]="emploiForm.userId" placeholder="Laisser vide = tous" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="showForm=false; resetForm()">Annuler</button>
+          <button class="btn-submit" (click)="saveEmploi()">✅ Enregistrer</button>
+        </div>
+      </div>
+
+      <div *ngFor="let jour of jours" class="jour-section">
+        <div class="jour-title" *ngIf="getEmploiByJour(jour).length > 0">📅 {{ jour }}</div>
+        <div class="cours-list" *ngIf="getEmploiByJour(jour).length > 0">
+          <div class="cours-card" *ngFor="let c of getEmploiByJour(jour)">
+            <div class="cours-time">
+              <div>{{ c.heureDebut }}</div>
+              <div class="time-sep">|</div>
+              <div>{{ c.heureFin }}</div>
+            </div>
+            <div class="cours-info">
+              <div class="cours-matiere">{{ c.matiere }}</div>
+              <div class="cours-details">
+                <span>📍 {{ c.salle }}</span>
+                <span>👨‍🏫 {{ c.professeur }}</span>
+                <span>🎓 {{ c.filiere }}</span>
+              </div>
+            </div>
+            <div class="cours-type-badge" [style.background]="getTypeColor(c.type)">{{ c.type }}</div>
+            <button class="btn-delete" (click)="deleteEmploi(c.id)">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="emplois.length===0">
+        📅 Aucun cours — cliquez sur "+ Ajouter un cours"
+      </div>
+    </div>
+
+    <!-- ══════ NOTES ══════ -->
+    <div *ngIf="activeTab==='notes'">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Gestion des notes</h1>
+          <p class="topbar-sub">Saisir et gérer les notes des étudiants</p>
+        </div>
+        <button class="btn-add" (click)="showForm=true; resetForm()">
+          + Saisir une note
+        </button>
+      </div>
+
+      <div class="form-card" *ngIf="showForm">
+        <div class="form-card-title">📝 Saisir une note</div>
+        <div class="form-grid">
+          <div class="field"><label>ID ÉTUDIANT *</label>
+            <input type="number" [(ngModel)]="noteForm.userId" placeholder="Ex: 1" /></div>
+          <div class="field">
+            <label>MATIÈRE *</label>
+            <select [(ngModel)]="noteForm.matiere">
+              <option value="">-- Choisir --</option>
+              <option *ngFor="let m of matieres" [value]="m.nom">{{ m.nom }}</option>
+            </select>
+          </div>
+          <div class="field"><label>NOTE (/20) *</label>
+            <input type="number" [(ngModel)]="noteForm.note" min="0" max="20" step="0.25" /></div>
+          <div class="field"><label>COEFFICIENT</label>
+            <input type="number" [(ngModel)]="noteForm.coefficient" min="1" max="5" /></div>
+          <div class="field">
+            <label>SEMESTRE</label>
+            <select [(ngModel)]="noteForm.semestre">
+              <option value="S1">Semestre 1</option>
+              <option value="S2">Semestre 2</option>
+            </select>
+          </div>
+          <div class="field"><label>ANNÉE</label>
+            <input type="text" [(ngModel)]="noteForm.annee" placeholder="2024/2025" /></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" (click)="showForm=false; resetForm()">Annuler</button>
+          <button class="btn-submit" (click)="saveNote()">✅ Enregistrer</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2>📝 Notes par étudiant</h2></div>
+        <div class="notes-info">
+          <p>💡 Saisissez l'ID (userId) de l'étudiant, choisissez la matière et entrez la note. L'étudiant verra sa note dans son espace chat.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ RAG ══════ -->
+    <div *ngIf="activeTab==='rag'">
+      <div class="topbar">
+        <div>
+          <h1 class="topbar-title">Base de connaissances RAG</h1>
+          <p class="topbar-sub">Gérez les documents pour enrichir le chatbot IA</p>
+        </div>
+        <label class="btn-add" style="cursor:pointer; display:inline-flex; align-items:center;">
+          {{ uploadProgress ? '⏳ Upload...' : '+ Uploader un document' }}
+          <input type="file" style="display:none" accept=".pdf,.docx,.txt"
+            (change)="uploadDocument($event)" [disabled]="uploadProgress" />
+        </label>
+      </div>
+
+      <div class="rag-info-card">
+        <div class="rag-info-icon">🧠</div>
+        <div>
+          <strong>Comment ça marche ?</strong>
+          <p>Uploadez des PDFs (règlements, programmes, FAQ...) et le chatbot les utilisera automatiquement pour répondre aux questions des étudiants avec des informations précises.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">🔍 Tester la base de connaissances</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="text" [(ngModel)]="ragSearchQuery"
+            placeholder="Ex: règlement de l'examen..."
+            (keyup.enter)="searchRag()"
+            style="flex:1; padding:10px 14px; border:1.5px solid #dbe4f3;
+                   border-radius:8px; font-size:0.88rem; outline:none;
+                   font-family:'Plus Jakarta Sans',sans-serif; background:#f8faff;" />
+          <button class="btn-submit" (click)="searchRag()">
+            {{ ragSearching ? '⏳...' : '🔍 Rechercher' }}
+          </button>
+        </div>
+        <div *ngIf="ragSearchResults.length > 0" style="margin-top:16px;">
+          <div *ngFor="let r of ragSearchResults" class="rag-result-card">
+            <div class="rag-result-source">📄 {{ r.filename }} — Score: {{ r.score }}</div>
+            <div class="rag-result-content">{{ r.content }}</div>
+          </div>
+        </div>
+        <div *ngIf="ragSearchResults.length===0 && !ragSearching && ragSearchQuery"
+          style="margin-top:12px; color:#64748b; font-size:0.82rem; padding:12px;">
+          Aucun résultat trouvé pour "{{ ragSearchQuery }}"
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2>📚 Documents indexés</h2>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="badge">{{ ragDocuments.length }}</span>
+            <button class="btn-delete" (click)="clearRag()"
+              style="font-size:0.78rem; padding:5px 12px;">
+              🗑️ Tout vider
+            </button>
+          </div>
+        </div>
+        <div *ngIf="ragLoading" style="padding:30px; text-align:center; color:#64748b;">⏳ Chargement...</div>
+        <div *ngIf="!ragLoading && ragDocuments.length > 0">
+          <div *ngFor="let doc of ragDocuments" class="rag-doc-item">
+            <span class="rag-doc-icon">📄</span>
+            <span class="rag-doc-name">{{ doc }}</span>
+            <span class="rag-doc-badge">Indexé ✅</span>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!ragLoading && ragDocuments.length===0">
+          📭 Aucun document — uploadez des PDFs pour enrichir le chatbot
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ UTILISATEURS ══════ -->
+    <div *ngIf="activeTab==='utilisateurs'">
+      <div class="topbar">
+        <h1 class="topbar-title">Utilisateurs</h1>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <h2>👥 Comptes enregistrés</h2>
+          <span class="badge">{{ users.length }}</span>
+        </div>
+        <div class="table-wrap" *ngIf="users.length > 0">
+          <table>
+            <thead><tr>
+              <th>ID</th><th>USERNAME</th><th>EMAIL</th><th>RÔLE</th><th>STATUT</th>
+            </tr></thead>
+            <tbody>
+              <tr *ngFor="let u of users">
+                <td>#{{ u.id }}</td>
                 <td>
                   <div class="user-cell">
-                    <div class="mini-avatar">{{ user.username[0].toUpperCase() }}</div>
-                    {{ user.username }}
+                    <div class="mini-avatar">{{ u.username[0].toUpperCase() }}</div>
+                    {{ u.username }}
                   </div>
                 </td>
-                <td>{{ user.email }}</td>
-                <td>
-                  <span class="role-badge" [class.admin]="user.role === 'ADMIN'">
-                    {{ user.role }}
-                  </span>
-                </td>
+                <td>{{ u.email }}</td>
+                <td><span class="role-badge" [class.admin]="u.role==='ADMIN'">{{ u.role }}</span></td>
                 <td><span class="status-badge">✅ Actif</span></td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <div class="empty-state" *ngIf="!loading && users.length === 0">
-          <p>😶 Aucun utilisateur trouvé</p>
-        </div>
+        <div class="empty-state" *ngIf="users.length===0">😶 Aucun utilisateur</div>
       </div>
     </div>
 

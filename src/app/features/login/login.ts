@@ -21,6 +21,15 @@ export class LoginComponent {
   loading = false;
   error = '';
 
+  roleSelected = false;
+  selectedRole = '';
+  showRegister = false;
+
+  regForm: any = {
+    nom: '', prenom: '', email: '',
+    specialite: '', username: '', password: ''
+  };
+
   features = [
     { icon: '🤖', fr: 'Assistant IA bilingue FR/AR', ar: 'مساعد ذكي ثنائي اللغة' },
     { icon: '📄', fr: 'Génération PDF & Word', ar: 'توليد وثائق PDF و Word' },
@@ -28,7 +37,20 @@ export class LoginComponent {
     { icon: '🔒', fr: 'Sécurité avancée JWT', ar: 'أمان JWT متقدم' }
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  selectRole(role: string) {
+    this.selectedRole = role;
+    this.roleSelected = true;
+    this.showRegister = false;
+    this.error = '';
+    // ✅ Jamais pré-rempli — l'utilisateur tape toujours
+    this.username = '';
+    this.password = '';
+  }
 
   login() {
     if (!this.username || !this.password) {
@@ -39,21 +61,53 @@ export class LoginComponent {
     }
     this.loading = true;
     this.error = '';
-    this.authService.login({ username: this.username, password: this.password }).subscribe({
+
+    this.authService.login({
+      username: this.username,
+      password: this.password
+    }).subscribe({
       next: (res) => {
         this.loading = false;
-        this.router.navigate([res.role === 'ADMIN' ? '/admin' : '/chat']);
+        // ✅ Redirection selon le rôle RÉEL en BD
+        if (res.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/chat']);
+        }
       },
       error: () => {
         this.loading = false;
         this.error = this.selectedLang === 'ar'
           ? 'اسم المستخدم أو كلمة المرور غير صحيحة'
-          : 'Nom d\'utilisateur ou mot de passe incorrect';
+          : 'Identifiants incorrects';
       }
     });
   }
 
-  goToRegister() {
-    this.router.navigate(['/register']);
+  registerProf() {
+    if (!this.regForm.username || !this.regForm.password || !this.regForm.email) {
+      alert('Veuillez remplir tous les champs obligatoires !');
+      return;
+    }
+    this.loading = true;
+    this.authService.register({
+      username: this.regForm.username,
+      email: this.regForm.email,
+      password: this.regForm.password
+    }).subscribe({
+      next: () => {
+        this.loading = false;
+        alert('✅ Compte créé ! Connectez-vous maintenant.');
+        this.showRegister = false;
+        this.username = this.regForm.username;
+        this.password = '';
+      },
+      error: () => {
+        this.loading = false;
+        alert('❌ Username ou email déjà utilisé');
+      }
+    });
   }
+
+  goToRegister() { this.router.navigate(['/register']); }
 }

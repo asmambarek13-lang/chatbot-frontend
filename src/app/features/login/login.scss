@@ -384,3 +384,48 @@
 .rtl .feat-row { flex-direction: row-reverse; }
 .rtl .brand { flex-direction: row-reverse; }
 .rtl .stats-bar { flex-direction: row-reverse; }
+// ROLE SELECTOR
+.role-selector {
+  text-align: center;
+  h2 { font-size: 1.8rem; font-weight: 900; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.8px; }
+  p { font-size: 0.88rem; color: #64748b; margin-bottom: 24px; }
+}
+
+.role-cards {
+  display: flex; flex-direction: column; gap: 12px; margin-top: 20px;
+}
+
+.role-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px; border: 1.5px solid #e2e8f0;
+  border-radius: 12px; cursor: pointer;
+  background: #f8faff; transition: all 0.2s; text-align: left;
+}
+
+.role-card:hover {
+  border-color: #0078d4; background: #eff6fc;
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0,120,212,0.1);
+}
+
+.admin-card:hover { border-color: #7c3aed; background: #f5f3ff; }
+
+.role-icon { font-size: 1.8rem; flex-shrink: 0; }
+.role-name { font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+.role-desc { font-size: 0.75rem; color: #64748b; }
+
+.back-btn {
+  font-size: 0.82rem; font-weight: 700; color: #0078d4;
+  cursor: pointer; margin-bottom: 20px;
+  display: inline-block;
+  &:hover { text-decoration: underline; }
+}
+
+.new-badge {
+  display: inline-block;
+  background: rgba(126,200,245,0.15);
+  color: #7ec8f5; font-size: 0.72rem; font-weight: 700;
+  padding: 4px 14px; border-radius: 20px;
+  border: 1px solid rgba(126,200,245,0.25);
+  letter-spacing: 0.08em; text-transform: uppercase; width: fit-content;
+}

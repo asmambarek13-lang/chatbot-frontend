@@ -44,50 +44,157 @@
     <!-- RIGHT PANEL -->
     <div class="right-panel">
       <div class="form-wrap">
+
         <div class="lang-row">
           <div class="lang-toggle">
             <button class="lang-btn" [class.active]="selectedLang === 'fr'" (click)="selectedLang = 'fr'">FR</button>
             <button class="lang-btn" [class.active]="selectedLang === 'ar'" (click)="selectedLang = 'ar'">AR</button>
           </div>
         </div>
-        <div class="form-header">
+
+        <!-- CHOIX RÔLE -->
+        <div class="role-selector" *ngIf="!roleSelected">
           <div class="form-logo">🤖</div>
-          <h2>{{ selectedLang === 'ar' ? 'تسجيل الدخول' : 'Connexion' }}</h2>
-          <p>{{ selectedLang === 'ar' ? 'أدخل بيانات حسابك للمتابعة' : 'Entrez vos identifiants pour continuer' }}</p>
-        </div>
-        <div class="alert error" *ngIf="error">⚠️ {{ error }}</div>
-        <div class="field">
-          <label>{{ selectedLang === 'ar' ? 'اسم المستخدم' : "NOM D'UTILISATEUR" }}</label>
-          <div class="input-wrap" [class.active]="userFocused">
-            <span class="ico">👤</span>
-            <input type="text" [(ngModel)]="username"
-              [placeholder]="selectedLang === 'ar' ? 'اسم المستخدم' : 'Nom d\'utilisateur'"
-              (focus)="userFocused=true" (blur)="userFocused=false"
-              (keyup.enter)="login()"/>
+          <h2>{{ selectedLang === 'ar' ? 'من أنت ؟' : 'Qui êtes-vous ?' }}</h2>
+          <p>{{ selectedLang === 'ar' ? 'اختر نوع حسابك للمتابعة' : 'Choisissez votre type de compte' }}</p>
+          <div class="role-cards">
+            <div class="role-card" (click)="selectRole('etudiant')">
+              <div class="role-icon">🎓</div>
+              <div class="role-name">{{ selectedLang === 'ar' ? 'طالب' : 'Étudiant' }}</div>
+              <div class="role-desc">{{ selectedLang === 'ar' ? 'الوصول إلى نتائجي وجدولي' : 'Accéder à mes notes et emploi du temps' }}</div>
+            </div>
+            <div class="role-card" (click)="selectRole('professeur')">
+              <div class="role-icon">👨‍🏫</div>
+              <div class="role-name">{{ selectedLang === 'ar' ? 'أستاذ' : 'Professeur' }}</div>
+              <div class="role-desc">{{ selectedLang === 'ar' ? 'إدارة النتائج والجداول' : 'Gérer les notes et cours' }}</div>
+            </div>
+            <div class="role-card admin-card" (click)="selectRole('admin')">
+              <div class="role-icon">⚙️</div>
+              <div class="role-name">{{ selectedLang === 'ar' ? 'مدير' : 'Administrateur' }}</div>
+              <div class="role-desc">{{ selectedLang === 'ar' ? 'إدارة النظام كاملاً' : 'Gérer tout le système' }}</div>
+            </div>
           </div>
         </div>
-        <div class="field">
-          <label>{{ selectedLang === 'ar' ? 'كلمة المرور' : 'MOT DE PASSE' }}</label>
-          <div class="input-wrap" [class.active]="passFocused">
-            <span class="ico">🔒</span>
-            <input [type]="showPass ? 'text' : 'password'" [(ngModel)]="password"
-              [placeholder]="selectedLang === 'ar' ? 'كلمة المرور' : '••••••••'"
-              (focus)="passFocused=true" (blur)="passFocused=false"
-              (keyup.enter)="login()"/>
-            <span class="eye" (click)="showPass=!showPass">{{ showPass ? '🙈' : '👁️' }}</span>
+
+        <!-- FORMULAIRE LOGIN -->
+        <div *ngIf="roleSelected && !showRegister">
+          <div class="back-btn" (click)="roleSelected = false">
+            ← {{ selectedLang === 'ar' ? 'رجوع' : 'Retour' }}
           </div>
+          <div class="form-header">
+            <div class="form-logo">
+              {{ selectedRole === 'etudiant' ? '🎓' : selectedRole === 'professeur' ? '👨‍🏫' : '⚙️' }}
+            </div>
+            <h2>{{ selectedLang === 'ar' ? 'تسجيل الدخول' : 'Connexion' }}</h2>
+            <p>{{ selectedLang === 'ar' ? 'أدخل بيانات حسابك' : 'Entrez vos identifiants' }}</p>
+          </div>
+          <div class="alert error" *ngIf="error">⚠️ {{ error }}</div>
+          <div class="field">
+            <label>{{ selectedLang === 'ar' ? 'اسم المستخدم' : "NOM D'UTILISATEUR" }}</label>
+            <div class="input-wrap" [class.active]="userFocused">
+              <span class="ico">👤</span>
+              <input type="text" [(ngModel)]="username"
+                [placeholder]="selectedLang === 'ar' ? 'اسم المستخدم' : 'Nom d\'utilisateur'"
+                (focus)="userFocused=true" (blur)="userFocused=false"
+                (keyup.enter)="login()"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>{{ selectedLang === 'ar' ? 'كلمة المرور' : 'MOT DE PASSE' }}</label>
+            <div class="input-wrap" [class.active]="passFocused">
+              <span class="ico">🔒</span>
+              <input [type]="showPass ? 'text' : 'password'" [(ngModel)]="password"
+                [placeholder]="selectedLang === 'ar' ? 'كلمة المرور' : '••••••••'"
+                (focus)="passFocused=true" (blur)="passFocused=false"
+                (keyup.enter)="login()"/>
+              <span class="eye" (click)="showPass=!showPass">{{ showPass ? '🙈' : '👁️' }}</span>
+            </div>
+          </div>
+          <button class="btn-primary" (click)="login()" [disabled]="loading">
+            <ng-container *ngIf="!loading">
+              {{ selectedLang === 'ar' ? 'تسجيل الدخول' : 'Se connecter →' }}
+            </ng-container>
+            <div class="dots" *ngIf="loading"><span></span><span></span><span></span></div>
+          </button>
+          <div class="switch-hint" *ngIf="selectedRole !== 'admin'">
+            {{ selectedLang === 'ar' ? 'ليس لديك حساب؟' : 'Pas encore de compte ?' }}
+            <a (click)="showRegister = true">
+              {{ selectedLang === 'ar' ? 'إنشاء حساب' : "S'inscrire" }}
+            </a>
+          </div>
+          <div class="secure-badge">🔒 {{ selectedLang === 'ar' ? 'اتصال آمن' : 'Connexion sécurisée' }}</div>
         </div>
-        <button class="btn-primary" (click)="login()" [disabled]="loading">
-          <ng-container *ngIf="!loading">{{ selectedLang === 'ar' ? 'تسجيل الدخول' : 'Se connecter →' }}</ng-container>
-          <div class="dots" *ngIf="loading"><span></span><span></span><span></span></div>
-        </button>
-        <div class="switch-hint">
-          {{ selectedLang === 'ar' ? 'ليس لديك حساب؟' : 'Pas encore de compte ?' }}
-          <a (click)="goToRegister()">{{ selectedLang === 'ar' ? 'إنشاء حساب' : "S'inscrire" }}</a>
+
+        <!-- FORMULAIRE REGISTER PROF -->
+        <div *ngIf="showRegister && selectedRole === 'professeur'">
+          <div class="back-btn" (click)="showRegister = false">← Retour</div>
+          <div class="form-header">
+            <div class="form-logo">👨‍🏫</div>
+            <h2>Inscription Professeur</h2>
+            <p>Créez votre compte professeur</p>
+          </div>
+          <div class="field">
+            <label>NOM *</label>
+            <div class="input-wrap">
+              <span class="ico">👤</span>
+              <input type="text" [(ngModel)]="regForm.nom" placeholder="Votre nom" />
+            </div>
+          </div>
+          <div class="field">
+            <label>PRÉNOM *</label>
+            <div class="input-wrap">
+              <span class="ico">👤</span>
+              <input type="text" [(ngModel)]="regForm.prenom" placeholder="Votre prénom" />
+            </div>
+          </div>
+          <div class="field">
+            <label>EMAIL *</label>
+            <div class="input-wrap">
+              <span class="ico">📧</span>
+              <input type="email" [(ngModel)]="regForm.email" placeholder="email@faculte.tn" />
+            </div>
+          </div>
+          <div class="field">
+            <label>SPÉCIALITÉ</label>
+            <div class="input-wrap">
+              <span class="ico">📚</span>
+              <input type="text" [(ngModel)]="regForm.specialite" placeholder="Ex: Informatique" />
+            </div>
+          </div>
+          <div class="field">
+            <label>NOM D'UTILISATEUR *</label>
+            <div class="input-wrap">
+              <span class="ico">🔑</span>
+              <input type="text" [(ngModel)]="regForm.username" placeholder="Ex: prof.benali" />
+            </div>
+          </div>
+          <div class="field">
+            <label>MOT DE PASSE *</label>
+            <div class="input-wrap">
+              <span class="ico">🔒</span>
+              <input [type]="showPass ? 'text' : 'password'" [(ngModel)]="regForm.password" placeholder="••••••••" />
+            </div>
+          </div>
+          <button class="btn-primary" (click)="registerProf()" [disabled]="loading">
+            <ng-container *ngIf="!loading">✅ Créer mon compte</ng-container>
+            <div class="dots" *ngIf="loading"><span></span><span></span><span></span></div>
+          </button>
         </div>
-        <div class="secure-badge">🔒 {{ selectedLang === 'ar' ? 'اتصال آمن' : 'Connexion sécurisée' }}</div>
+
+        <!-- FORMULAIRE REGISTER ÉTUDIANT -->
+        <div *ngIf="showRegister && selectedRole === 'etudiant'">
+          <div class="back-btn" (click)="showRegister = false">← Retour</div>
+          <div class="form-header">
+            <div class="form-logo">🎓</div>
+            <h2>{{ selectedLang === 'ar' ? 'إنشاء حساب' : 'Inscription Étudiant' }}</h2>
+            <p>{{ selectedLang === 'ar' ? 'انتقل إلى صفحة التسجيل' : 'Vous serez redirigé vers le formulaire complet' }}</p>
+          </div>
+          <button class="btn-primary" (click)="goToRegister()">
+            📋 {{ selectedLang === 'ar' ? 'ملء استمارة التسجيل' : 'Remplir le dossier d\'inscription' }}
+          </button>
+        </div>
+
       </div>
     </div>
-
   </div>
 </div>
